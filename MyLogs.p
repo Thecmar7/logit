@@ -1,0 +1,3 @@
+S'testlog'
+p0
+.
