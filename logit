@@ -16,6 +16,8 @@
 		logit -i 			// get info about current log
 		logit -edit 		// edit the log		
 
+
+
 	9/2/2016
 ''' 
 import sys
@@ -27,6 +29,7 @@ from datetime import date, timedelta
 
 import os
 
+# The command strings 
 class cmds:
 	newing 	= "new"
 	listing = "ls"
@@ -40,7 +43,13 @@ class cmds:
 	editing = "edit"
 	setting = "setup"
 	helping = "help"
+	breaking= "break"
 
+	# TODO
+	filing	= "file"
+	forming	= "format"
+
+# the colors
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -75,6 +84,7 @@ def helpText():
 			"\tlogit -" + cmds.toing + " \"name\" \"this is a thing to log\"\n" +
 			"\tlogit -" + cmds.infoing + " 			// info about log\n" +
 			"\tlogit -" + cmds.starting + " 			// Starts a log console\n" +
+			"\tlogit -" + cmds.breaking + " 			// puts a break line \n" +
 			"\tlogit -" + cmds.editing + "			// Allows you to edit the log")
 
 # 	setCurrentLog ( name ):
@@ -116,6 +126,7 @@ def logTo( log, instr ):
 	# load log
 	workingLog = pickle.load( open(filePath + log, "rb" ))
 
+	# TODO: get the date thingy to working
 	# if last edit is one day ago
 	now = datetime.datetime.now()
 	
@@ -139,10 +150,12 @@ def logTo( log, instr ):
 def printOutLog( log ):
 	workingLog = pickle.load( open(filePath + log, "rb" ))['logs']
 	for log in workingLog:
-		if (log[0] != '['):
-			print("    " + log)
-		else:
+		if (log[0] == '['):
 			print(log)
+		elif (log[0] == "|"):
+			print("      " + log)
+		else:
+			print("    " + log)
 
 #	putDateInLog( log ):
 #
@@ -187,13 +200,7 @@ def saveLogToFile( log, file ):
 	for l in logs:
 		f.write(l + "\n")
 
-# TODO: EditLog ( log ):
-#
-# Will open the log and allow the user to edit the log
-def editLog( log ):
-	workingLog = pickle.load( open( filePath + log, "rb" ) )
-	for i in range(0, len(workingLog["logs"])):
-		print("[" + str(i) + "] " + workingLog["logs"][i] )
+
 
 # 	starting ( log ):
 # 
@@ -213,6 +220,7 @@ def starting( log ):
 				logTo(log, inputs)
 
 
+
 #	tryGettingFile
 #
 #	This will try to connect to the file and then return the file name or kill the
@@ -226,6 +234,54 @@ def tryGettingFile():
 
 	# if it succeeds 
 	return currentLogName;
+
+#   EditLog ( log ):
+#
+# 	Will open the log and allow the user to edit the log
+def editLog( log ):
+	workingLog = pickle.load( open( filePath + log, "rb" ) )
+	for i in range(0, len(workingLog["logs"])):
+		print("[" + str(i) + "] " + workingLog["logs"][i] )
+
+	theI = raw_input("# to delete (q to quit): ")
+
+	# Q to quit 
+	if (theI == 'q'):
+		return 0
+
+	print(workingLog['logs'][int(theI)])
+	
+
+	ans = raw_input("Are you sure you want to delete \'" + workingLog['logs'][int(theI)] + "\'? Y/n ")
+	if (ans.upper()[0] == 'Y'): 
+		workingLog['logs'].pop(int(theI))
+		print("Deleted")
+		workingLog['count'] = workingLog['count'] - 1
+
+
+	pickle.dump(workingLog, open(filePath + log, "w"))
+
+#	Breaking
+#
+#
+def breakLine( log ):
+	print("break Line Added")
+	workingLog = pickle.load( open( filePath + log, "rb" ) )
+	workingLog['logs'].append("|")
+	pickle.dump(workingLog, open(filePath + log, "w"))
+
+# 	TODO: formatOutPut
+#
+#
+def formatOutPut( log ):
+	print(" In Developement")
+
+
+# 	TODO: setTheFile
+#
+#
+def setTheFile ( path ):
+	print("Developement")
 
 
 
@@ -266,8 +322,23 @@ def main():
 				outInfo( currentLogName )
 			elif (sys.argv[1] == "-" + cmds.starting):
 				starting( currentLogName )
+			elif (sys.argv[1] == "-" + cmds.filing):
+				#TODO
+				setTheFile( argv[1] )
+			elif (sys.argv[1] == "-" + cmds.forming):
+				#TODO
+				formatOutPut( currentLogName )
+			elif (sys.argv[1] == "-" + cmds.editing):
+				#TODO
+				editLog( currentLogName )
+			elif (sys.argv[1] == "-" + cmds.breaking):
+				breakLine( currentLogName )
 			else:
-				logTo(currentLogName, sys.argv[1])
+				if ( sys.argv[1][0] != '-' ):
+					logTo( currentLogName, sys.argv[1] )
+				else:
+					print("ERROR: " + sys.argv[1] + " is not a valid command")
+					helpText() 
 
 	# 2 given arguments 
 	elif (len(sys.argv) == 3):
