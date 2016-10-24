@@ -60,7 +60,8 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
-complete = "/usr/local/my_scripts"
+#complete = "/usr/local/my_scripts"
+complete = "/Users/TheCmar7/Developer/python/Logit"
 filePath = complete + "/logit_saves/"
 infoFile = "logit_current.p"
 
@@ -274,10 +275,10 @@ def editLog( log ):
 #
 #	Adds a line to the timeline making the log look a little nicer.
 def breakLine( log ):
-	print("break Line Added")
+	print("Break Line Added")
 	workingLog = pickle.load( open( filePath + log, "rb" ) )
 	workingLog['logs'].append("|")
-	pickle.dump(workingLog, open(filePath + log, "w"))
+	pickle.dump( workingLog, open( filePath + log, "w" ) )
 
 # 	TODO: formatOutPut
 #
@@ -296,9 +297,50 @@ def setTheFile ( path ):
 	# move stuff from old path to new path.
 	#
 
-#	TODO:
+
+#	TODO: inputLogFromFile
+#
+#	This will allow the user to save from a file that was outputted from his
+#	program
 def inputLogFromFile( file ):
 	print( "In Developement ")
+	
+	# Try to open the file
+	try:
+		# open the file and look at the line
+		with open( file ) as f:
+			
+			name = f.readline().split(':').trim()
+			createdDate = f.readline().split(':').trim()
+			editedDate = f.readline().split(':').trim()
+			logCount = f.readline().split(':').trim()
+			
+			f.readline() # don't need
+			
+			# Create a new log with the given name
+			newLog(name)
+		
+			# get the newly created pickle
+			workingLog = pickle.load( open( filePath + name, "rb" ) )
+
+			for line in f:
+				# is it a date
+				if ( line[0] == '[' ):
+					workingLog['log'].append(line)
+				# is it a line break
+				elif ( line[0] == '|' ):
+					workingLog['log'].append(line)
+				# its an actual input and we need a log
+				else:
+					workingLog['log'].append(line)
+					workingLog['count'] = working['count'] + 1
+
+		# save the new log
+		pickle.dump( workingLog, open( filePath + name, "w" ) )
+
+	# file not a thing
+	except IOError:
+		print( file + ": Is not a file.")
 
 
 #	main()
@@ -321,8 +363,18 @@ def main():
 						"logs": [], 
 						"count": 0,
 					  }
-			pickle.dump( current, open(filePath + infoFile, "w") )
-			currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
+			
+		
+			try:
+				#
+				pickle.dump( current, open(filePath + infoFile, "w") )
+				currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
+			except OIError:
+				# no current logs directory.. so make one
+				newpath = ''
+				if not os.path.exists(newpath):
+					os.makedirs(newpath)
+
 		else:
 			currentLogName = tryGettingFile()
 
@@ -344,6 +396,7 @@ def main():
 			elif (sys.argv[1] == "-" + cmds.forming):
 				#TODO
 				formatOutPut( currentLogName )
+
 			elif (sys.argv[1] == "-" + cmds.editing):
 				editLog( currentLogName )
 			elif (sys.argv[1] == "-" + cmds.breaking):
