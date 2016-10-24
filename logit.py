@@ -241,7 +241,7 @@ def tryGettingFile():
 def editLog( log ):
 	workingLog = pickle.load( open( filePath + log, "rb" ) )
 	for i in range(0, len(workingLog["logs"])):
-		print("[" + str(i) + "] " + workingLog["logs"][i] )
+		print("[" + str(i + 1) + "] " + workingLog["logs"][i] )
 
 	theI = raw_input("# to delete (q to quit): ")
 
@@ -249,15 +249,15 @@ def editLog( log ):
 	if (theI == 'q'):
 		return 0
 
-	print(workingLog['logs'][int(theI)])
-	
+	if (theI >= working['logs'] or theI <= 0):
+		print("not in index")
+		return 0
 
 	ans = raw_input("Are you sure you want to delete \'" + workingLog['logs'][int(theI)] + "\'? Y/n ")
 	if (ans.upper()[0] == 'Y'): 
 		workingLog['logs'].pop(int(theI))
 		print("Deleted")
 		workingLog['count'] = workingLog['count'] - 1
-
 
 	pickle.dump(workingLog, open(filePath + log, "w"))
 
