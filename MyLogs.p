@@ -1,3 +1,0 @@
-S'testlog'
-p0
-.

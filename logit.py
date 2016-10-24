@@ -16,8 +16,6 @@
 		logit -i 			// get info about current log
 		logit -edit 		// edit the log		
 
-
-
 	9/2/2016
 ''' 
 import sys
@@ -48,6 +46,7 @@ class cmds:
 	# TODO
 	filing	= "file"
 	forming	= "format"
+	fromFile= "import"
 
 # the colors
 class bcolors:
@@ -73,6 +72,9 @@ infoFile = "logit_current.p"
 #
 #	Prints out the text of  commands
 def helpText():
+	
+	# TODO: Reorder these things
+	
 	print(	"\tlogit -" + cmds.newing + " \"name\"		// creates a new log\n" +
 			"\tlogit -" + cmds.opening + " \"name\"			// opens\n" +
 			"\tlogit -" + cmds.saving + " \"name\"			// outputs the log to a txt file\n" +
@@ -86,6 +88,12 @@ def helpText():
 			"\tlogit -" + cmds.starting + " 			// Starts a log console\n" +
 			"\tlogit -" + cmds.breaking + " 			// puts a break line \n" +
 			"\tlogit -" + cmds.editing + "			// Allows you to edit the log")
+
+#			"\tlogit -" + cmds.filing + "			// Allows the user to set the file path
+#			"\tlogit -" + cmds.forming + "			// Allows the user to set the formatting
+#			"\tlogit -" + cmds.fromFile + "			// Allows the input from a text file
+
+
 
 # 	setCurrentLog ( name ):
 #
@@ -249,6 +257,7 @@ def editLog( log ):
 	if (theI == 'q'):
 		return 0
 
+	# Checking the edit input
 	if (theI >= working['logs'] or theI <= 0):
 		print("not in index")
 		return 0
@@ -263,7 +272,7 @@ def editLog( log ):
 
 #	Breaking
 #
-#
+#	Adds a line to the timeline making the log look a little nicer.
 def breakLine( log ):
 	print("break Line Added")
 	workingLog = pickle.load( open( filePath + log, "rb" ) )
@@ -272,17 +281,24 @@ def breakLine( log ):
 
 # 	TODO: formatOutPut
 #
-#
+#	This will allow the user to set the way that the output looks
 def formatOutPut( log ):
 	print(" In Developement")
 
 
 # 	TODO: setTheFile
 #
-#
+#	This will allow the user to set where their logs are saved.
 def setTheFile ( path ):
 	print("Developement")
 
+	# set path (TODO: The path needs to be part of the info current info pickle)
+	# move stuff from old path to new path.
+	#
+
+#	TODO:
+def inputLogFromFile( file ):
+	print( "In Developement ")
 
 
 #	main()
@@ -329,7 +345,6 @@ def main():
 				#TODO
 				formatOutPut( currentLogName )
 			elif (sys.argv[1] == "-" + cmds.editing):
-				#TODO
 				editLog( currentLogName )
 			elif (sys.argv[1] == "-" + cmds.breaking):
 				breakLine( currentLogName )
