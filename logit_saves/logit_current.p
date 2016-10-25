@@ -11,5 +11,6 @@ p4
 (lp5
 sS'path'
 p6
-g2
+S'/Users/TheCmar7/Developer/python/Logit/logit_saves/'
+p7
 s.

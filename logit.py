@@ -44,7 +44,6 @@ class cmds:
 	breaking= "break"
 
 	# TODO
-	filing	= "file"
 	forming	= "format"
 	fromFile= "import"
 
@@ -63,8 +62,9 @@ class bcolors:
 #complete = "/usr/local/my_scripts"
 # these need to become variables in the info file.
 complete = "/Users/TheCmar7/Developer/python/Logit"
-filePath = complete + "/logit_saves/"
+directory = "/logit_saves/"
 infoFile = "logit_current.p"
+filePath = complete + directory
 
 #	This is if  you need to reset the current.p file
 # current = { "current": "", "logs": [], count: 0, }
@@ -89,11 +89,10 @@ def helpText():
 			"\tlogit -" + cmds.infoing + " 			// info about log\n" +
 			"\tlogit -" + cmds.starting + " 			// Starts a log console\n" +
 			"\tlogit -" + cmds.breaking + " 			// puts a break line \n" +
-			"\tlogit -" + cmds.editing + "			// Allows you to edit the log")
+			"\tlogit -" + cmds.editing + "			// Allows you to edit the log \n"+
 
-#			"\tlogit -" + cmds.filing + "			// Allows the user to set the file path
 #			"\tlogit -" + cmds.forming + "			// Allows the user to set the formatting
-#			"\tlogit -" + cmds.fromFile + "			// Allows the input from a text file
+			"\tlogit -" + cmds.fromFile + "			// Allows the input from a text file")
 
 
 
@@ -287,18 +286,6 @@ def breakLine( log ):
 def formatOutPut( log ):
 	print(" In Developement")
 
-
-# 	TODO: setTheFile
-#
-#	This will allow the user to set where their logs are saved.
-def setTheFile ( path ):
-	print("Developement")
-
-	# set path (TODO: The path needs to be part of the info current info pickle)
-	# move stuff from old path to new path.
-	#
-
-
 #	TODO: inputLogFromFile
 #
 #	This will allow the user to save from a file that was outputted from his
@@ -311,10 +298,10 @@ def inputLogFromFile( file ):
 		# open the file and look at the line
 		with open( file ) as f:
 			
-			name = f.readline().split(':').trim()
-			createdDate = f.readline().split(':').trim()
-			editedDate = f.readline().split(':').trim()
-			logCount = f.readline().split(':').trim()
+			name = f.readline().split(':')[1].strip()
+			createdDate = f.readline().split(':')[1].strip()
+			editedDate = f.readline().split(':')[1].strip()
+			logCount = f.readline().split(':')[1].strip()
 			
 			f.readline() # don't need
 			
@@ -327,14 +314,14 @@ def inputLogFromFile( file ):
 			for line in f:
 				# is it a date
 				if ( line[0] == '[' ):
-					workingLog['log'].append(line)
+					workingLog['logs'].append(line)
 				# is it a line break
 				elif ( line[0] == '|' ):
-					workingLog['log'].append(line)
+					workingLog['logs'].append(line)
 				# its an actual input and we need a log
 				else:
-					workingLog['log'].append(line)
-					workingLog['count'] = working['count'] + 1
+					workingLog['logs'].append(line)
+					workingLog['count'] = workingLog['count'] + 1
 
 		# save the new log
 		pickle.dump( workingLog, open( filePath + name, "w" ) )
@@ -363,6 +350,7 @@ def setup():
 		# no current logs directory.. so make one
 		newpath = os.path.dirname(os.path.realpath(__file__))
 		newpath = newpath + "/logit_saves/"
+		current['path'] = newpath
 		if not os.path.exists(newpath):
 			os.makedirs(newpath)
 			pickle.dump( current, open(filePath + infoFile, "w") )
@@ -383,26 +371,7 @@ def main():
 	elif (len(sys.argv) == 2):
 		# one given argument
 		if (sys.argv[1] == "-setup"):
-			current = {  
-						"current": "",
-						"logs": [], 
-						"count": 0,
-						"path": ""
-						
-					  }
-			
-			try:
-				#
-				pickle.dump( current, open(filePath + infoFile, "w") )
-				currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
-			except IOError:
-				# no current logs directory.. so make one
-				newpath = os.path.dirname(os.path.realpath(__file__))
-				newpath = newpath + "/logit_saves/"
-				if not os.path.exists(newpath):
-					os.makedirs(newpath)
-					pickle.dump( current, open(filePath + infoFile, "w") )
-					currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
+			setup()
 
 		else:
 			currentLogName = tryGettingFile()
@@ -425,7 +394,7 @@ def main():
 			elif (sys.argv[1] == "-" + cmds.forming):
 				#TODO
 				formatOutPut( currentLogName )
-
+			
 			elif (sys.argv[1] == "-" + cmds.editing):
 				editLog( currentLogName )
 			elif (sys.argv[1] == "-" + cmds.breaking):
@@ -449,7 +418,10 @@ def main():
 			setCurrentLog(sys.argv[2])
 		elif (sys.argv[1] == "-" + cmds.saving):
 			saveLogToFile( currentLogName, sys.argv[2] )
-			print( "save the log to the file: " + sys.argv[2] ) 
+			print( "save the log to the file: " + sys.argv[2] )
+		elif (sys.argv[1] == "-" + cmds.fromFile):
+			inputLogFromFile( sys.argv[2] )
+		
 		elif(sys.argv[1] == "-" + cmds.outing):
 			printOutLog(sys.argv[2])
 
