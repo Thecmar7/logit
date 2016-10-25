@@ -61,6 +61,7 @@ class bcolors:
 
 
 #complete = "/usr/local/my_scripts"
+# these need to become variables in the info file.
 complete = "/Users/TheCmar7/Developer/python/Logit"
 filePath = complete + "/logit_saves/"
 infoFile = "logit_current.p"
@@ -342,6 +343,30 @@ def inputLogFromFile( file ):
 	except IOError:
 		print( file + ": Is not a file.")
 
+#	setup
+#
+#	This function is used to initially set up the info file of the current
+#	log and what not
+def setup():
+	current = {
+		"current": "",
+		"logs": [],
+		"count": 0,
+		"path": ""
+	}
+			
+	try:
+		#
+		pickle.dump( current, open(filePath + infoFile, "w") )
+		currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
+	except IOError:
+		# no current logs directory.. so make one
+		newpath = os.path.dirname(os.path.realpath(__file__))
+		newpath = newpath + "/logit_saves/"
+		if not os.path.exists(newpath):
+			os.makedirs(newpath)
+			pickle.dump( current, open(filePath + infoFile, "w") )
+			currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
 
 #	main()
 #
