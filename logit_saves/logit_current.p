@@ -1,0 +1,15 @@
+(dp0
+S'current'
+p1
+S''
+p2
+sS'count'
+p3
+I0
+sS'logs'
+p4
+(lp5
+sS'path'
+p6
+g2
+s.

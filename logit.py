@@ -362,18 +362,22 @@ def main():
 						"current": "",
 						"logs": [], 
 						"count": 0,
+						"path": ""
+						
 					  }
 			
-		
 			try:
 				#
 				pickle.dump( current, open(filePath + infoFile, "w") )
 				currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
-			except OIError:
+			except IOError:
 				# no current logs directory.. so make one
-				newpath = ''
+				newpath = os.path.dirname(os.path.realpath(__file__))
+				newpath = newpath + "/logit_saves/"
 				if not os.path.exists(newpath):
 					os.makedirs(newpath)
+					pickle.dump( current, open(filePath + infoFile, "w") )
+					currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
 
 		else:
 			currentLogName = tryGettingFile()
@@ -405,7 +409,7 @@ def main():
 				if ( sys.argv[1][0] != '-' ):
 					logTo( currentLogName, sys.argv[1] )
 				else:
-					print("ERROR: " + sys.argv[1] + " is not a valid command")
+					print(bcolors.WARNING + "ERROR: " + bcolors.ENDC + sys.argv[1] + " is not a valid command")
 					helpText() 
 
 	# 2 given arguments 
