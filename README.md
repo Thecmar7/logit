@@ -31,3 +31,4 @@ This is a small little python program that I made to quickly log work in the ter
 * Is this program worth writing? YES
 * Is it worth the amount of time that I am spending on it? You aren't spending
   that much time on it, but stop procrastinating
+
