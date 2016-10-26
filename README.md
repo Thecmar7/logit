@@ -7,16 +7,23 @@ This is a small little python program that I made to quickly log work in the ter
 * up it in your bin local or something. I personaly have my own scripts file cause I am afraid of breaking things then I have another file that I save the log Pickle files in. 
   
 ## Features todo
-
-- [ ] custom output format	(Very stretch goal)
+ 
+- [ ] custom output format	(Very stretch goal) (honestly do not think this will ever happen)
 - [ ] have the formatting custom part of the info pickle.
 
 - [x] make info pickle have file path location
-- [ ] custom file location
+- [ ] make use of the pickled file path... (I do not know why this was useful...)  
+
+- [ ] custom file location. (I do not think this is a good thing either. What was I smoking?)
 - [ ] Make the set up and automatic thing that will be check when the program
   is run for every time... 
 
-- [ ] input from file (How do I do the formatting?) 
+- [x] Strip off new lines on import from text file..
+- [x] input from file (How do I do the formatting?) 
+- [ ] import makes weird log name tabbing
+
+- [x] Need to be able to delete entire logs. 
+- [ ] deleting should change current... Or let the user choose a current...
 
 ## questions I have for myself.
 

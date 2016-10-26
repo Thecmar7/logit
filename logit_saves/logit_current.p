@@ -1,16 +1,20 @@
 (dp0
 S'current'
 p1
-S''
+S'Senior Project'
 p2
 sS'count'
 p3
-I0
+I5
 sS'logs'
 p4
 (lp5
-sS'path'
+S'testing'
 p6
-S'/Users/TheCmar7/Developer/python/Logit/logit_saves/'
+aS'Senior Project'
 p7
+asS'path'
+p8
+S'/Users/TheCmar7/Developer/python/Logit/logit_saves/'
+p9
 s.

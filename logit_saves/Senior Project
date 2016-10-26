@@ -1,0 +1,182 @@
+(dp0
+S'count'
+p1
+I76
+sS'dateCreated'
+p2
+S'2016-10-25 22:54'
+p3
+sS'lastEdit'
+p4
+S'2016-10-25 22:54'
+p5
+sS'logs'
+p6
+(lp7
+S'[Wed 2016-10-19]'
+p8
+aS'09:31 - Our second meeting and everyone else is late'
+p9
+aS'09:31 - I should not come to the next meeting on time'
+p10
+aS'09:33 - Today I think we want to get a general timeline, and maybe work on the problem statement and get a better look at the documentation for visual code.'
+p11
+aS'09:48 - start'
+p12
+aS'09:53 - "Enforces organization, allows to write code to other files or quickly place code, quick and visual navigation" -Eric Winkler'
+p13
+aS'[Wed 2016-10-19]'
+p14
+aS'10:03 - Enforce organization with location tag system, and a configuration system, not a wizard, but an initial set up a configuration sthing. Static analysis, tage manager, a GUI'
+p15
+aS'10:05 - For the quick place code we wouwould need a loacation tag system a tag manager and a smart cut & paste.'
+p16
+aS'10:06 - For the visulat navigation we need a visualization of the code structure an d a quick GUI Navigation.'
+p17
+aS"10:07 - We have decided to start with C. We all know that language annd it won't change and we won't have to deal with classes just yet."
+p18
+aS'10:07 - logit -out'
+p19
+aS'10:07 - logit'
+p20
+aS'10:19 - lets start coding'
+p21
+aS'10:19 - -'
+p22
+aS'10:19 - -'
+p23
+aS'10:22 - Okay we are thinking about doing HTML and websites'
+p24
+aS"10:28 - I found a good website that describes a 'hello world' - https://code.visualstudio.com/Docs/extensions/example-hello-world"
+p25
+aS'10:30 -'
+p26
+aS"10:42 - installed a code generator with 'npm install -g yo generator-code'"
+p27
+aS"10:42 - Then I ran the command code with the command 'yo code'"
+p28
+aS'10:43 - it led me through the creation instructions was made the skeleton of a code extention'
+p29
+aS'10:46 - I opened the generated code in VS Code'
+p30
+aS'10:48 - Then I started debugging the code with F5'
+p31
+aS'10:54 - Then running the Hello World command on the new Extension Developement Host window I was able to do the shift+command+P and run the hello world command and it printed out "Hello World!"'
+p32
+aS'10:54 - *'
+p33
+aS'10:55 - So while I was doing that Zach and Eric chose to do basic HTMl JS and CSS organizer. This will be good?'
+p34
+aS'10:57 - * Developement *'
+p35
+aS'10:59 - looking at the code there are a lot of pieces'
+p36
+aS'11:04 - made a new branch'
+p37
+aS'11:12 - We are now doing HTML and we are going to strip the JS and the CSS'
+p38
+aS'11:12 - We will have an exception list'
+p39
+aS"11:12 - looking at srcs and user's exceptions"
+p40
+aS'11:13 - we need to keep in mind that we will be adding exceptions with continued developement'
+p41
+aS'11:14 - For the CSS we are going to optimize styles'
+p42
+aS'11:14 - IDs vs. Classes'
+p43
+aS'11:15 - Look for the CSS style on the different blocks that might have similiar styles and merge them together.'
+p44
+aS"11:16 - We will need a huge amount of parsing. 'smart parsing'"
+p45
+aS'11:17 - Style Combination'
+p46
+aS'11:18 - CSS has no exceptions...? But maybe'
+p47
+aS'11:19 - For JS parser, what is the best design practices for JS'
+p48
+aS'11:19 - move all variable declarations to the top of the file'
+p49
+aS'11:20 - or at least the globals'
+p50
+aS'11:26 - We will just be doing HTML and CSS to begin with at the moment'
+p51
+aS'11:27 - "Websites can get messy, this makes it cleaner" -Eric Winkler'
+p52
+aS'11:30 - Do we need to add PHP'
+p53
+aS'11:32 - yes but later?'
+p54
+aS'11:33 - If We do PHP I think we might as well do C'
+p55
+aS'11:34 - We got HTML in our HTML in out HTML'
+p56
+aS'11:34 - Web stuff can be done so many ways!'
+p57
+aS'11:35 - HTML. CSS. JavaScript. These are our focus for the moment.'
+p58
+aS'11:35 - HTML has an index'
+p59
+aS'11:35 - the JS links to the index'
+p60
+aS'11:36 - the engine the events the controller all connected to the HTML index page'
+p61
+aS'11:37 - The CSS page(s) connected to all the HTML elements'
+p62
+aS"11:39 - Then we will need to connect the Images, they will be a 'resources' file"
+p63
+aS'11:43 - What will people be clicking on? Classes the HTML Elements'
+p64
+aS'11:44 - We will be using w3 best practices'
+p65
+aS'11:44 - Visual Error in the visual'
+p66
+aS'11:49 - I should make this logger do more Markdown stuff. That would be cool.'
+p67
+aS'11:49 - Some side menu that Eric wants'
+p68
+aS'11:51 - It will have issue highlights, Sam dislikes it'
+p69
+aS'11:54 - Eric is convincing sam and I, Visual Studio Code will work'
+p70
+aS'11:54 - We worked 3 hours'
+p71
+aS'12:35 - ls'
+p72
+aS'[Thu 2016-10-20]'
+p73
+aS'17:03 - So we are wanting to make a simple Requirements.'
+p74
+aS'17:03 - Just some basics'
+p75
+aS'17:03 - And we need to redo our problem statement'
+p76
+aS'17:08 - Eric and Sam are going over the stuff that we went over yesterday when Sam was not here cause he was late to our last meeting.'
+p77
+aS'17:08 - Zach is working on the issue visualizer tool that he wants us to use.'
+p78
+aS'17:27 - Zach is failing'
+p79
+aS"17:27 - Eric's Grandparents are awesome"
+p80
+aS'18:41 - We are going to try again tomorrow morning'
+p81
+aS'[Fri 2016-10-21]'
+p82
+aS'10:11 - We are gonna get together today'
+p83
+aS'10:12 - I was at Kelley at 9:00am no one else was.'
+p84
+aS'|'
+p85
+aS'12:26 - We met with Vee and we are awesome'
+p86
+aS'12:26 - We might need to tell Kevin of our accelerated schedule'
+p87
+aS'12:27 - Vee thinks that it might be a lot of work, but we think we can handle it'
+p88
+asS'name'
+p89
+S'Senior Project'
+p90
+s.

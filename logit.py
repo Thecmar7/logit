@@ -42,10 +42,10 @@ class cmds:
 	setting = "setup"
 	helping = "help"
 	breaking= "break"
-
-	# TODO
-	forming	= "format"
 	fromFile= "import"
+
+	#TODO
+	deleting= "delete"
 
 # the colors
 class bcolors:
@@ -90,8 +90,6 @@ def helpText():
 			"\tlogit -" + cmds.starting + " 			// Starts a log console\n" +
 			"\tlogit -" + cmds.breaking + " 			// puts a break line \n" +
 			"\tlogit -" + cmds.editing + "			// Allows you to edit the log \n"+
-
-#			"\tlogit -" + cmds.forming + "			// Allows the user to set the formatting
 			"\tlogit -" + cmds.fromFile + "			// Allows the input from a text file")
 
 
@@ -286,7 +284,7 @@ def breakLine( log ):
 def formatOutPut( log ):
 	print(" In Developement")
 
-#	TODO: inputLogFromFile
+#	inputLogFromFile
 #
 #	This will allow the user to save from a file that was outputted from his
 #	program
@@ -314,13 +312,13 @@ def inputLogFromFile( file ):
 			for line in f:
 				# is it a date
 				if ( line[0] == '[' ):
-					workingLog['logs'].append(line)
+					workingLog['logs'].append(line.rstrip())
 				# is it a line break
 				elif ( line[0] == '|' ):
-					workingLog['logs'].append(line)
+					workingLog['logs'].append(line.rstrip())
 				# its an actual input and we need a log
 				else:
-					workingLog['logs'].append(line)
+					workingLog['logs'].append(line.rstrip())
 					workingLog['count'] = workingLog['count'] + 1
 
 		# save the new log
@@ -356,6 +354,21 @@ def setup():
 			pickle.dump( current, open(filePath + infoFile, "w") )
 			currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
 
+#	deleteLog( log )
+#
+#	Will allow the user to delete an entire log
+def deleteLog( log ):
+	workingInfo = pickle.load( open(filePath + infoFile, "rb" ))
+	if ( log in workingInfo['logs'] ):
+		ans = raw_input("Are you sure you want to delete \'" + log + "\'? Y/n ")
+		if (ans.upper()[0] == 'Y'):
+			workingInfo['logs'].remove(log)
+			pickle.dump( workingInfo, open(filePath + infoFile, "w") )
+			os.remove(filePath + log)
+			#TODO change current
+	else:
+		print("not a log")
+
 #	main()
 #
 #	This is a the main funciton of the progam
@@ -388,9 +401,6 @@ def main():
 				outInfo( currentLogName )
 			elif (sys.argv[1] == "-" + cmds.starting):
 				starting( currentLogName )
-			elif (sys.argv[1] == "-" + cmds.filing):
-				#TODO
-				setTheFile( argv[1] )
 			elif (sys.argv[1] == "-" + cmds.forming):
 				#TODO
 				formatOutPut( currentLogName )
@@ -420,8 +430,11 @@ def main():
 			saveLogToFile( currentLogName, sys.argv[2] )
 			print( "save the log to the file: " + sys.argv[2] )
 		elif (sys.argv[1] == "-" + cmds.fromFile):
+			#TODO
 			inputLogFromFile( sys.argv[2] )
-		
+		elif (sys.argv[1] == "-" + cmds.deleting):
+			print("in Developement")
+			deleteLog(sys.argv[2])
 		elif(sys.argv[1] == "-" + cmds.outing):
 			printOutLog(sys.argv[2])
 
