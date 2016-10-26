@@ -432,15 +432,21 @@ def main():
 			deleteLog(sys.argv[2])
 		elif(sys.argv[1] == "-" + cmds.outing):
 			printOutLog(sys.argv[2])
+		else:
+			print(bcolors.WARNING + "ERROR: " + bcolors.ENDC + sys.argv[1] + " is not a valid command")
+			helpText()
 
-	# 3 given arguments 
+	# 3 given arguments
 	elif (len(sys.argv) == 4):
 		currentLogName = tryGettingFile()
-
 		if(sys.argv[1] == "-" + cmds.toing):
 			logTo(sys.argv[2], sys.argv[3])
 		elif(sys.argv[1] == "out"):
 			printOutLog(sys.argv[2])
+		else:
+			print(bcolors.WARNING + "ERROR: " + bcolors.ENDC + sys.argv[1] + " is not a valid command")
+			helpText()
+
 
 # this is where it all starts
 main()
