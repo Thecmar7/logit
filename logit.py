@@ -26,6 +26,7 @@ import datetime
 from datetime import date, timedelta
 
 import os
+import readline
 
 # The command strings 
 class cmds:
@@ -43,8 +44,6 @@ class cmds:
 	helping = "help"
 	breaking= "break"
 	fromFile= "import"
-
-	#TODO
 	deleting= "delete"
 
 # the colors
@@ -257,13 +256,13 @@ def editLog( log ):
 		return 0
 
 	# Checking the edit input
-	if (theI >= working['logs'] or theI <= 0):
+	if (int(theI) - 1 >= len(workingLog['logs']) or int(theI) <= 0):
 		print("not in index")
 		return 0
 
-	ans = raw_input("Are you sure you want to delete \'" + workingLog['logs'][int(theI)] + "\'? Y/n ")
+	ans = raw_input("Are you sure you want to delete \'" + workingLog['logs'][int(theI) - 1] + "\'? Y/n ")
 	if (ans.upper()[0] == 'Y'): 
-		workingLog['logs'].pop(int(theI))
+		workingLog['logs'].pop(int(theI) - 1)
 		print("Deleted")
 		workingLog['count'] = workingLog['count'] - 1
 
@@ -401,10 +400,6 @@ def main():
 				outInfo( currentLogName )
 			elif (sys.argv[1] == "-" + cmds.starting):
 				starting( currentLogName )
-			elif (sys.argv[1] == "-" + cmds.forming):
-				#TODO
-				formatOutPut( currentLogName )
-			
 			elif (sys.argv[1] == "-" + cmds.editing):
 				editLog( currentLogName )
 			elif (sys.argv[1] == "-" + cmds.breaking):
