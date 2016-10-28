@@ -1,0 +1,26 @@
+(dp0
+S'count'
+p1
+I2
+sS'dateCreated'
+p2
+S'2016-10-25 23:16'
+p3
+sS'lastEdit'
+p4
+S'2016-10-26 10:04'
+p5
+sS'logs'
+p6
+(lp7
+S'23:17 - Edit bug fencepost problem on last index being not in index'
+p8
+aS'[Wed 2016-10-26]'
+p9
+aS'10:04 - The import from txt file tabbing on the name, rstrip() was not removing tabbing'
+p10
+asS'name'
+p11
+S'bugs fixed'
+p12
+s.
