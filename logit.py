@@ -277,18 +277,11 @@ def breakLine( log ):
 	workingLog['logs'].append("|")
 	pickle.dump( workingLog, open( filePath + log, "w" ) )
 
-# 	TODO: formatOutPut
-#
-#	This will allow the user to set the way that the output looks
-def formatOutPut( log ):
-	print(" In Developement")
-
 #	inputLogFromFile
 #
 #	This will allow the user to save from a file that was outputted from his
 #	program
 def inputLogFromFile( file ):
-	print( "In Developement ")
 	
 	# Try to open the file
 	try:
@@ -335,8 +328,7 @@ def setup():
 	current = {
 		"current": "",
 		"logs": [],
-		"count": 0,
-		"path": ""
+		"count": 0
 	}
 			
 	try:
@@ -441,11 +433,22 @@ def main():
 		currentLogName = tryGettingFile()
 		if(sys.argv[1] == "-" + cmds.toing):
 			logTo(sys.argv[2], sys.argv[3])
-		elif(sys.argv[1] == "out"):
+		elif(sys.argv[1] == "-" + cmds.outing):
 			printOutLog(sys.argv[2])
 		else:
 			print(bcolors.WARNING + "ERROR: " + bcolors.ENDC + sys.argv[1] + " is not a valid command")
 			helpText()
+
+	# 4 giveb arguments
+	elif (len(sys.argv) == 5):
+		currentLogName = tryGetting()
+		if (sys.argv[1] == "-" + cmds.outing):
+			if (sys.argv[3] == "-" + "md")
+				print("out but in mark down")
+
+			else:
+				print("out in latex")
+
 
 
 # this is where it all starts
