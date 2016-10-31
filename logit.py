@@ -349,7 +349,7 @@ def setup():
 #
 #	Will allow the user to delete an entire log
 def deleteLog( log ):
-	workingInfo = pickle.load( open(filePath + infoFile, "rb" ))
+	workingInfo = pickle.load( open( filePath + infoFile, "rb" ))
 	if ( log in workingInfo['logs'] ):
 		ans = raw_input("Are you sure you want to delete \'" + log + "\'? Y/n ")
 		if (ans.upper()[0] == 'Y'):
@@ -359,6 +359,35 @@ def deleteLog( log ):
 			#TODO change current
 	else:
 		print("not a log")
+
+
+
+# TODO:	longestLog( log )
+#
+#	getting the longest log from a given log
+def longestLog( log ):
+	workingLog = pickle.load( open( filePath + log, rb ) )
+	len = 0
+	ind = 0
+	for log in workingLog['logs']:
+		if ( len > len(log) ):
+			len = len(log)
+
+	return len
+
+# TODO:	shortenString( input, len )
+#
+#	Shorten the string an returns an array of the given length
+def shortenString( input, len ):
+	chunks = len(input)
+	chunk_size = len
+	return [ x[i:i+chunk_size] for i in range(0, chunks, chunk_size) ]
+
+# TODO: insert date
+#
+# ###
+
+
 
 #	main()
 #
@@ -443,9 +472,8 @@ def main():
 	elif (len(sys.argv) == 5):
 		currentLogName = tryGetting()
 		if (sys.argv[1] == "-" + cmds.outing):
-			if (sys.argv[3] == "-" + "md")
+			if (sys.argv[3] == "-" + "md"):
 				print("out but in mark down")
-
 			else:
 				print("out in latex")
 
