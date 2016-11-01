@@ -3,20 +3,9 @@
 # logit
 '''
 	Okay so I wanna make this logger application
-	It's functions: 
-		logit -new "name"		// creates a new log
-		logit -o "name"		// opens
-		logit -s "name"		// outputs the log to a txt file
-		logit -d 			// date it
-		logit -ls 			// list out the saved logs 
-		logit -out 			// out current log 
-		logit -out "name"
-		logit "This is a thing to log"
-		logit -to "name" "this is a thing to log"
-		logit -i 			// get info about current log
-		logit -edit 		// edit the log		
-
+	
 	9/2/2016
+	10/31/2016
 ''' 
 import sys
 import pickle 
@@ -28,35 +17,17 @@ from datetime import date, timedelta
 import os
 import readline
 
-# The command strings 
-class cmds:
-	newing 	= "new"
-	listing = "ls"
-	opening = "o" 
-	saving	= "s"
-	dating 	= "d"
-	outing 	= "out"
-	toing 	= "to"
-	infoing = "i"
-	starting= "start" 
-	editing = "edit"
-	setting = "setup"
-	helping = "help"
-	breaking= "break"
-	fromFile= "import"
-	deleting= "delete"
 
-# the colors
+# so I can change the output colors
 class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
+	HEADER = '\033[95m'
+	OKBLUE = '\033[94m'
+	OKGREEN = '\033[92m'
     WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
+	FAIL = '\033[91m'
+	ENDC = '\033[0m'
+	BOLD = '\033[1m'
+	UNDERLINE = '\033[4m'
 
 #complete = "/usr/local/my_scripts"
 # these need to become variables in the info file.
@@ -72,25 +43,27 @@ filePath = complete + directory
 # 	helpText():
 #
 #	Prints out the text of  commands
-def helpText():
+def helpText( cmds ):
+	for k, v in cmds.items():
+		print("\t" v.cmd + " " + v.desc)
 	
-	# TODO: Reorder these things
 	
-	print(	"\tlogit -" + cmds.newing + " \"name\"		// creates a new log\n" +
-			"\tlogit -" + cmds.opening + " \"name\"			// opens\n" +
-			"\tlogit -" + cmds.saving + " \"name\"			// outputs the log to a txt file\n" +
-			"\tlogit -" + cmds.dating + " 			// date it\n" +
-			"\tlogit -" + cmds.listing + " 			// list out the saved logs\n" +
-			"\tlogit -" + cmds.outing + " 			// out current log\n" +
-			"\tlogit -" + cmds.outing + " \"name\"		// prints out given log\n" +
+	'''
+	print(	"\tlogit " + cmds.newing + " \"name\"		// creates a new log\n" +
+			"\tlogit " + cmds.opening + " \"name\"			// opens\n" +
+			"\tlogit " + cmds.saving + " \"name\"			// outputs the log to a txt file\n" +
+			"\tlogit " + cmds.dating + " 			// date it\n" +
+			"\tlogit " + cmds.listing + " 			// list out the saved logs\n" +
+			"\tlogit " + cmds.outing + " 			// out current log\n" +
+			"\tlogit " + cmds.outing + " \"name\"		// prints out given log\n" +
 			"\tlogit \"This is a thing to log\"\n" +
-			"\tlogit -" + cmds.toing + " \"name\" \"this is a thing to log\"\n" +
-			"\tlogit -" + cmds.infoing + " 			// info about log\n" +
-			"\tlogit -" + cmds.starting + " 			// Starts a log console\n" +
-			"\tlogit -" + cmds.breaking + " 			// puts a break line \n" +
-			"\tlogit -" + cmds.editing + "			// Allows you to edit the log \n"+
-			"\tlogit -" + cmds.fromFile + "			// Allows the input from a text file")
-
+			"\tlogit " + cmds.toing + " \"name\" \"this is a thing to log\"\n" +
+			"\tlogit " + cmds.infoing + " 			// info about log\n" +
+			"\tlogit " + cmds.starting + " 			// Starts a log console\n" +
+			"\tlogit " + cmds.breaking + " 			// puts a break line \n" +
+			"\tlogit " + cmds.editing + "			// Allows you to edit the log \n"+
+			"\tlogit " + cmds.fromFile + "			// Allows the input from a text file")
+	'''
 
 
 # 	setCurrentLog ( name ):
@@ -260,7 +233,7 @@ def editLog( log ):
 		print("not in index")
 		return 0
 
-	ans = raw_input("Are you sure you want to delete \'" + workingLog['logs'][int(theI) - 1] + "\'? Y/n ")
+	ans = raw_input("Delete \'" + workingLog['logs'][int(theI) - 1] + "\'? Y/n ")
 	if (ans.upper()[0] == 'Y'): 
 		workingLog['logs'].pop(int(theI) - 1)
 		print("Deleted")
@@ -387,12 +360,98 @@ def shortenString( input, len ):
 #
 # ###
 
+#	errorWarning( errorString )
+#
+#
+def errorWarning( errorString ):
+	print(bcolors.WARNING + "ERROR: " + bcolors.ENDC + errorString)
+
+#	outCurrent()
+#
+#	Prints out the current working log
+def outCurrent():
+	print(tryGettingFile())
+
+
+#	Class Command
+#
+#	name
+#	cmd
+#	desc
+#	func
+#	TODO: options
+class Command:
+	def __init__(self, name, cmd, desc, func):
+		self.name = name
+		self.cmd  = cmd
+		self.desc = desc
+		self.func = func
+	
+	def doFunction(args):
+		self.func(*args)
+
+# The command strings
+cmds = {
+	'new'	: Command("new", "-new", "\'name\' : creates a new log", newLog),
+	'n'		: Command("name", "-n", ": prints out the name of the current log", outCurrent),
+	'ls'	: Command("list", "-ls", ": lists out all the logs", listOutLogs),
+	'o'		: Command("open", "-o", ": opens the another log", setCurrent),
+	's'		: Command("save", "-s", "\'name'\ : saves the log to text file", saveLogToFile),
+	'd'		: Command("date", "-d", ": adds todays date to the log", putDateInLog),
+	'out'	: Command("out", "-out", ": prints out the logs", printOutLog),
+	'to'	: Command("to", "-to", "\'name\' : logs the given name", logTo),
+	'i'		: Command("info", "-i", ": prints out the info", outInfo),
+	'start'	: Command("start", "-start", ": starts a log console", starting),
+	'edit'	: Command("edit", "-edit", ": you can remove logs", editLog),
+	'break'	: Command("break", "-break", ": adds a break line in log", breakLine),
+	'in'	: Command("from", "-in", "\'name\' : imports from a saved text file", fromFile),
+	'del'	: Command("delete", "-del", ": deletes the current log", deleteLog),
+	'setup'	: Command("setup", "--setup", ": sets up the Logit saves", setup),
+	'help'	: Command("help", "--help", ": Shows the help message", helpText)
+	}
+	'''
+		new		= "-new"
+		name	= "-n"
+		listing = "-ls"
+		opening = "-o"
+		saving	= "-s"
+		dating 	= "-d"
+		outing 	= "-out"
+		toing 	= "-to"
+		infoing = "-i"
+		starting= "-start"
+		editing = "-e"
+		breaking= "-b"
+		fromFile= "-in"
+		deleting= "-del"
+		markdown= "-md"
+		setting = "--setup"
+		helping = "--help"
+		'''
+
+
 
 
 #	main()
 #
 #	This is a the main funciton of the progam
 def main():
+
+	#
+	for arg in range( 0, len(sys.argv) ):
+		currentLogName = tryGettingFile()
+		if (arg[0] == '-' and arg[1] == '-'):
+			# help
+			if (arg[2] == 'h'):
+				helpText()
+			# setup
+			elif (arg[2] == 's'):
+				setup()
+			else:
+				errorWarning( arg + " is not a command. ")
+		elif (arg[0] == '-'):
+
+	
 
 	if (len(sys.argv) == 1):
 		# no given arguments
@@ -403,76 +462,76 @@ def main():
 	# given 1 argument
 	elif (len(sys.argv) == 2):
 		# one given argument
-		if (sys.argv[1] == "-setup"):
+		if (sys.argv[1] ==   cmds.setting):
 			setup()
 
 		else:
 			currentLogName = tryGettingFile()
 
-			if (sys.argv[1] == "-" + cmds.dating):
+			if (sys.argv[1] ==   cmds.dating):
 				putDateInLog( currentLogName )
-			elif (sys.argv[1] == "-" + cmds.listing):
+			elif (sys.argv[1] ==   cmds.listing):
 				listOutLogs()
-			elif (sys.argv[1] == "-" + cmds.outing):
+			elif (sys.argv[1] ==   cmds.outing):
 				printOutLog( currentLogName )
-			elif (sys.argv[1] == "--help"):
+			elif (sys.argv[1] == cmds.helping):
 				helpText()
-			elif (sys.argv[1] == "-" + cmds.infoing):
+			elif (sys.argv[1] ==   cmds.infoing):
 				outInfo( currentLogName )
-			elif (sys.argv[1] == "-" + cmds.starting):
+			elif (sys.argv[1] ==   cmds.starting):
 				starting( currentLogName )
-			elif (sys.argv[1] == "-" + cmds.editing):
+			elif (sys.argv[1] ==   cmds.editing):
 				editLog( currentLogName )
-			elif (sys.argv[1] == "-" + cmds.breaking):
+			elif (sys.argv[1] ==   cmds.breaking):
 				breakLine( currentLogName )
 			else:
 				if ( sys.argv[1][0] != '-' ):
 					logTo( currentLogName, sys.argv[1] )
 				else:
-					print(bcolors.WARNING + "ERROR: " + bcolors.ENDC + sys.argv[1] + " is not a valid command")
-					helpText() 
+					errorWarning(sys.argv[1] + " is not a valid command")
+					helpText()
 
 	# 2 given arguments 
 	elif (len(sys.argv) == 3):
 		currentLogName = tryGettingFile()
 
-		if (sys.argv[1] == "-" + cmds.newing):
+		if (sys.argv[1] == cmds.newing):
 			newLog(sys.argv[2])
-		elif (sys.argv[1] == "-" + cmds.editing):
+		elif (sys.argv[1] == cmds.editing):
 			editLog()
-		elif (sys.argv[1] == "-" + cmds.opening):
+		elif (sys.argv[1] == cmds.opening):
 			setCurrentLog(sys.argv[2])
-		elif (sys.argv[1] == "-" + cmds.saving):
+		elif (sys.argv[1] == cmds.saving):
 			saveLogToFile( currentLogName, sys.argv[2] )
 			print( "save the log to the file: " + sys.argv[2] )
-		elif (sys.argv[1] == "-" + cmds.fromFile):
+		elif (sys.argv[1] == cmds.fromFile):
 			#TODO
 			inputLogFromFile( sys.argv[2] )
-		elif (sys.argv[1] == "-" + cmds.deleting):
+		elif (sys.argv[1] == cmds.deleting):
 			print("in Developement")
 			deleteLog(sys.argv[2])
-		elif(sys.argv[1] == "-" + cmds.outing):
+		elif(sys.argv[1] == cmds.outing):
 			printOutLog(sys.argv[2])
 		else:
-			print(bcolors.WARNING + "ERROR: " + bcolors.ENDC + sys.argv[1] + " is not a valid command")
+			errorWarning(sys.argv[1] + " is not a valid command")
 			helpText()
 
 	# 3 given arguments
 	elif (len(sys.argv) == 4):
 		currentLogName = tryGettingFile()
-		if(sys.argv[1] == "-" + cmds.toing):
+		if(sys.argv[1] == cmds.toing):
 			logTo(sys.argv[2], sys.argv[3])
-		elif(sys.argv[1] == "-" + cmds.outing):
+		elif(sys.argv[1] == cmds.outing):
 			printOutLog(sys.argv[2])
 		else:
-			print(bcolors.WARNING + "ERROR: " + bcolors.ENDC + sys.argv[1] + " is not a valid command")
+			errorWarning(sys.argv[1] + " is not a valid command")
 			helpText()
 
 	# 4 giveb arguments
 	elif (len(sys.argv) == 5):
 		currentLogName = tryGetting()
-		if (sys.argv[1] == "-" + cmds.outing):
-			if (sys.argv[3] == "-" + "md"):
+		if (sys.argv[1] ==   cmds.outing):
+			if (sys.argv[3] == ):
 				print("out but in mark down")
 			else:
 				print("out in latex")
