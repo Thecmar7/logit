@@ -1,7 +1,7 @@
 (dp0
 S'current'
 p1
-S'bugs fixed'
+S'testing'
 p2
 sS'count'
 p3

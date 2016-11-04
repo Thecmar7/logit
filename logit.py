@@ -17,13 +17,26 @@ from datetime import date, timedelta
 import os
 import readline
 
+#	tryGettingFile
+#
+#	This will try to connect to the file and then return the file name or kill the
+#	program
+def tryGettingFile():
+	try:
+		currentLogName = pickle.load( open(filePath + infoFile, "rb") )['current']
+	except IOError:
+		print("Try running the \"logit -setup\" command")
+		exit(1)
+	
+	# if it succeeds
+	return currentLogName;
 
 # so I can change the output colors
 class bcolors:
 	HEADER = '\033[95m'
 	OKBLUE = '\033[94m'
 	OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
+	WARNING = '\033[93m'
 	FAIL = '\033[91m'
 	ENDC = '\033[0m'
 	BOLD = '\033[1m'
@@ -36,34 +49,19 @@ directory = "/logit_saves/"
 infoFile = "logit_current.p"
 filePath = complete + directory
 
-#	This is if  you need to reset the current.p file
-# current = { "current": "", "logs": [], count: 0, }
-# pickle.dump( current, open(filePath + infoFile, "w") )
+cmds = {}
+currentLogName = tryGettingFile()
 
 # 	helpText():
 #
 #	Prints out the text of  commands
-def helpText( cmds ):
+def helpText():
 	for k, v in cmds.items():
-		print("\t" v.cmd + " " + v.desc)
-	
-	
-	'''
-	print(	"\tlogit " + cmds.newing + " \"name\"		// creates a new log\n" +
-			"\tlogit " + cmds.opening + " \"name\"			// opens\n" +
-			"\tlogit " + cmds.saving + " \"name\"			// outputs the log to a txt file\n" +
-			"\tlogit " + cmds.dating + " 			// date it\n" +
-			"\tlogit " + cmds.listing + " 			// list out the saved logs\n" +
-			"\tlogit " + cmds.outing + " 			// out current log\n" +
-			"\tlogit " + cmds.outing + " \"name\"		// prints out given log\n" +
-			"\tlogit \"This is a thing to log\"\n" +
-			"\tlogit " + cmds.toing + " \"name\" \"this is a thing to log\"\n" +
-			"\tlogit " + cmds.infoing + " 			// info about log\n" +
-			"\tlogit " + cmds.starting + " 			// Starts a log console\n" +
-			"\tlogit " + cmds.breaking + " 			// puts a break line \n" +
-			"\tlogit " + cmds.editing + "			// Allows you to edit the log \n"+
-			"\tlogit " + cmds.fromFile + "			// Allows the input from a text file")
-	'''
+		print( "\t" + k + " " + v.desc)
+
+
+def isALog( log ):
+	return log in pickle.load( open(file + infoFile, "rb" ))['logs']
 
 
 # 	setCurrentLog ( name ):
@@ -79,6 +77,10 @@ def setCurrentLog( name ):
 #
 #	creates a new log with the name that is given 
 def newLog( name ):
+	if isALog( name ):
+		errorWarning( name + " is already a log!" )
+		return 0
+	
 	workingLog = pickle.load( open(filePath + infoFile, "rb" ))
 	workingLog['logs'].append(name)
 	workingLog['count'] = workingLog['count'] + 1;
@@ -101,7 +103,7 @@ def newLog( name ):
 #	logTo ( log, instr):
 #
 #	logs the given message to the log 
-def logTo( log, instr ):
+def logTo( instring, log = currentLogName ):
 	# load log
 	workingLog = pickle.load( open(filePath + log, "rb" ))
 
@@ -115,7 +117,7 @@ def logTo( log, instr ):
 	if ( nextDate < now ):
 		putDateInLog( log ) 
 
-	mes = str(now.strftime("%H:%M - ")) + instr
+	mes = str(now.strftime("%H:%M - ")) + instring
 
 	workingLog['logs'].append(mes)
 	workingLog['lastEdit'] = now.strftime("%Y-%m-%d %H:%M")
@@ -126,7 +128,7 @@ def logTo( log, instr ):
 # 	printOutLog( log ):
 #
 # 	Prints out all the saved strings that are in a log
-def printOutLog( log ):
+def printOutLog( log = currentLogName ):
 	workingLog = pickle.load( open(filePath + log, "rb" ))['logs']
 	for log in workingLog:
 		if (log[0] == '['):
@@ -139,7 +141,7 @@ def printOutLog( log ):
 #	putDateInLog( log ):
 #
 #	This adds a log that is the current date 
-def putDateInLog( log ):
+def putDateInLog( log = currentLogName):
 	now = datetime.datetime.now()
 	workingLog = pickle.load( open(filePath + log, "rb" ))
 	workingLog['logs'].append(now.strftime("[%a %Y-%m-%d]"))
@@ -149,7 +151,7 @@ def putDateInLog( log ):
 #	outInfo( log ):
 #
 #	Prints out the info of the of the log
-def outInfo( log ):
+def outInfo( log = currentLogName ):
 	workingLog = pickle.load( open(filePath + log, "rb" ))
 	print("name:		" + workingLog['name'])
 	print("Created: 	" + workingLog['dateCreated'])
@@ -167,7 +169,7 @@ def listOutLogs():
 #	saveLogToFile():
 #
 #	This saves the log to a text file 
-def saveLogToFile( log, file ):
+def saveLogToFile( file, log = currentLogName ):
 	workingLog = pickle.load( open( filePath + log, "rb" ) )
 	f = open( file, 'w' )
 	f.write( "name:     \t" + workingLog["name"] + "\n" )
@@ -184,7 +186,7 @@ def saveLogToFile( log, file ):
 # 	starting ( log ):
 # 
 #	Allows the user to input consecutive logs
-def starting( log ):
+def starting( log = currentLogName ):
 	os.system('clear')
 	inputs = ""
 	print("\"-quit\" to stop logging\n\"-d\" to date")
@@ -217,7 +219,7 @@ def tryGettingFile():
 #   EditLog ( log ):
 #
 # 	Will open the log and allow the user to edit the log
-def editLog( log ):
+def editLog( log = currentLogName ):
 	workingLog = pickle.load( open( filePath + log, "rb" ) )
 	for i in range(0, len(workingLog["logs"])):
 		print("[" + str(i + 1) + "] " + workingLog["logs"][i] )
@@ -244,7 +246,7 @@ def editLog( log ):
 #	Breaking
 #
 #	Adds a line to the timeline making the log look a little nicer.
-def breakLine( log ):
+def breakLine( log = currentLogName ):
 	print("Break Line Added")
 	workingLog = pickle.load( open( filePath + log, "rb" ) )
 	workingLog['logs'].append("|")
@@ -321,7 +323,7 @@ def setup():
 #	deleteLog( log )
 #
 #	Will allow the user to delete an entire log
-def deleteLog( log ):
+def deleteLog( log = currentLogName ):
 	workingInfo = pickle.load( open( filePath + infoFile, "rb" ))
 	if ( log in workingInfo['logs'] ):
 		ans = raw_input("Are you sure you want to delete \'" + log + "\'? Y/n ")
@@ -338,7 +340,7 @@ def deleteLog( log ):
 # TODO:	longestLog( log )
 #
 #	getting the longest log from a given log
-def longestLog( log ):
+def longestLog( log = currentLogName ):
 	workingLog = pickle.load( open( filePath + log, rb ) )
 	len = 0
 	ind = 0
@@ -381,160 +383,64 @@ def outCurrent():
 #	func
 #	TODO: options
 class Command:
-	def __init__(self, name, cmd, desc, func):
+	def __init__(self, name, desc, func, argN = 0, argP = 0):
 		self.name = name
-		self.cmd  = cmd
 		self.desc = desc
 		self.func = func
+		self.argN = argN
+		self.argP = argP
 	
-	def doFunction(args):
+	def doFunction(self, args):
 		self.func(*args)
 
 # The command strings
 cmds = {
-	'new'	: Command("new", "-new", "\'name\' : creates a new log", newLog),
-	'n'		: Command("name", "-n", ": prints out the name of the current log", outCurrent),
-	'ls'	: Command("list", "-ls", ": lists out all the logs", listOutLogs),
-	'o'		: Command("open", "-o", ": opens the another log", setCurrent),
-	's'		: Command("save", "-s", "\'name'\ : saves the log to text file", saveLogToFile),
-	'd'		: Command("date", "-d", ": adds todays date to the log", putDateInLog),
-	'out'	: Command("out", "-out", ": prints out the logs", printOutLog),
-	'to'	: Command("to", "-to", "\'name\' : logs the given name", logTo),
-	'i'		: Command("info", "-i", ": prints out the info", outInfo),
-	'start'	: Command("start", "-start", ": starts a log console", starting),
-	'edit'	: Command("edit", "-edit", ": you can remove logs", editLog),
-	'break'	: Command("break", "-break", ": adds a break line in log", breakLine),
-	'in'	: Command("from", "-in", "\'name\' : imports from a saved text file", fromFile),
-	'del'	: Command("delete", "-del", ": deletes the current log", deleteLog),
-	'setup'	: Command("setup", "--setup", ": sets up the Logit saves", setup),
-	'help'	: Command("help", "--help", ": Shows the help message", helpText)
+	'-new'		: Command("new", "\'name\' : creates a new log", newLog, 1, 1),
+	'-n'		: Command("name",  ": prints out the name of the current log", outCurrent, 0, 1),
+	'-ls'		: Command("list",  ": lists out all the logs", listOutLogs),
+	'-o'		: Command("open",  ": opens the another log", setCurrentLog, 1, 1),
+	'-s'		: Command("save",  "\'name\' : saves the log to text file", saveLogToFile, 1, 2),
+	'-d'		: Command("date",  ": adds todays date to the log", putDateInLog, 0, 1),
+	'-out'		: Command("out",  ": prints out the logs", printOutLog, 0, 1),
+	'-to'		: Command("to",  "\'name\' \'msg\' : logs the given name", logTo, 2, 2),
+	'-i'		: Command("info",  ": prints out the info", outInfo, 0, 1),
+	'-start'	: Command("start",  ": starts a log console", starting, 0, 1),
+	'-edit'		: Command("edit",  ": you can remove logs", editLog, 0, 1),
+	'-break'	: Command("break",  ": adds a break line in log", breakLine, 0, 1),
+	'-in'		: Command("from",  "\'name\' \'file\' : imports from a saved text file", inputLogFromFile, 2, 2),
+	'-del'		: Command("delete",  ": deletes the current log", deleteLog, 0, 1),
+	'--setup'	: Command("setup",  ": sets up the Logit saves", setup),
+	'--help'	: Command("help", ": Shows the help message", helpText)
 	}
-	'''
-		new		= "-new"
-		name	= "-n"
-		listing = "-ls"
-		opening = "-o"
-		saving	= "-s"
-		dating 	= "-d"
-		outing 	= "-out"
-		toing 	= "-to"
-		infoing = "-i"
-		starting= "-start"
-		editing = "-e"
-		breaking= "-b"
-		fromFile= "-in"
-		deleting= "-del"
-		markdown= "-md"
-		setting = "--setup"
-		helping = "--help"
-		'''
-
-
-
 
 #	main()
 #
 #	This is a the main funciton of the progam
 def main():
-
-	#
-	for arg in range( 0, len(sys.argv) ):
-		currentLogName = tryGettingFile()
-		if (arg[0] == '-' and arg[1] == '-'):
-			# help
-			if (arg[2] == 'h'):
-				helpText()
-			# setup
-			elif (arg[2] == 's'):
-				setup()
-			else:
-				errorWarning( arg + " is not a command. ")
-		elif (arg[0] == '-'):
-
-	
-
+	currentLogName = tryGettingFile()
 	if (len(sys.argv) == 1):
-		# no given arguments
-		currentLogName = tryGettingFile()
+		print(currentLogName)
+
+	i = 1
+	while i < len(sys.argv):
+		command = sys.argv[i]
+		if command in cmds:
+			c = cmds[command]
+			#set up the options
+			options = []
+			
+			if (c.argN == c.argP):
+				for j in range(0, c.argN):
+					options.append( sys.argv[i + 1 + j] )
+				i = i + c.argN
 		
-		print( currentLogName )
-
-	# given 1 argument
-	elif (len(sys.argv) == 2):
-		# one given argument
-		if (sys.argv[1] ==   cmds.setting):
-			setup()
+			c.doFunction(options)
+		elif (command[0] != '-'):
+			cmds['-to'].doFunction([command, currentLogName])
 
 		else:
-			currentLogName = tryGettingFile()
-
-			if (sys.argv[1] ==   cmds.dating):
-				putDateInLog( currentLogName )
-			elif (sys.argv[1] ==   cmds.listing):
-				listOutLogs()
-			elif (sys.argv[1] ==   cmds.outing):
-				printOutLog( currentLogName )
-			elif (sys.argv[1] == cmds.helping):
-				helpText()
-			elif (sys.argv[1] ==   cmds.infoing):
-				outInfo( currentLogName )
-			elif (sys.argv[1] ==   cmds.starting):
-				starting( currentLogName )
-			elif (sys.argv[1] ==   cmds.editing):
-				editLog( currentLogName )
-			elif (sys.argv[1] ==   cmds.breaking):
-				breakLine( currentLogName )
-			else:
-				if ( sys.argv[1][0] != '-' ):
-					logTo( currentLogName, sys.argv[1] )
-				else:
-					errorWarning(sys.argv[1] + " is not a valid command")
-					helpText()
-
-	# 2 given arguments 
-	elif (len(sys.argv) == 3):
-		currentLogName = tryGettingFile()
-
-		if (sys.argv[1] == cmds.newing):
-			newLog(sys.argv[2])
-		elif (sys.argv[1] == cmds.editing):
-			editLog()
-		elif (sys.argv[1] == cmds.opening):
-			setCurrentLog(sys.argv[2])
-		elif (sys.argv[1] == cmds.saving):
-			saveLogToFile( currentLogName, sys.argv[2] )
-			print( "save the log to the file: " + sys.argv[2] )
-		elif (sys.argv[1] == cmds.fromFile):
-			#TODO
-			inputLogFromFile( sys.argv[2] )
-		elif (sys.argv[1] == cmds.deleting):
-			print("in Developement")
-			deleteLog(sys.argv[2])
-		elif(sys.argv[1] == cmds.outing):
-			printOutLog(sys.argv[2])
-		else:
-			errorWarning(sys.argv[1] + " is not a valid command")
-			helpText()
-
-	# 3 given arguments
-	elif (len(sys.argv) == 4):
-		currentLogName = tryGettingFile()
-		if(sys.argv[1] == cmds.toing):
-			logTo(sys.argv[2], sys.argv[3])
-		elif(sys.argv[1] == cmds.outing):
-			printOutLog(sys.argv[2])
-		else:
-			errorWarning(sys.argv[1] + " is not a valid command")
-			helpText()
-
-	# 4 giveb arguments
-	elif (len(sys.argv) == 5):
-		currentLogName = tryGetting()
-		if (sys.argv[1] ==   cmds.outing):
-			if (sys.argv[3] == ):
-				print("out but in mark down")
-			else:
-				print("out in latex")
+			errorWarning(command + " is not a valid command")
+		i = i + 1
 
 
 

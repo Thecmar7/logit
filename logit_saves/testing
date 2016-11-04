@@ -1,20 +1,26 @@
 (dp0
 S'count'
 p1
-I0
-sS'logs'
+I3
+sS'dateCreated'
 p2
-(lp3
+S'2016-10-25 22:43'
+p3
 sS'lastEdit'
 p4
-S'2016-10-25 22:43'
+S'2016-11-03 23:29'
 p5
-sS'name'
+sS'logs'
 p6
-S'testing'
-p7
-sS'dateCreated'
+(lp7
+S'23:28 - hi'
 p8
-S'2016-10-25 22:43'
+aS'23:28 - hi again'
 p9
+aS'23:29 - hi a third time'
+p10
+asS'name'
+p11
+S'testing'
+p12
 s.
