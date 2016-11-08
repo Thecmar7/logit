@@ -2,10 +2,16 @@
 
 # logit
 '''
-	Okay so I wanna make this logger application
+	Okay, so I wanna make this logger application
 	
-	9/2/2016
-	10/31/2016
+	9/2/2016	- it works
+	10/31/2016	- it works real well
+	11/8/2016	- it does not work
+				- Commands need a better way of being processed. 
+				- I don't know how to do that
+				- I am thinking of a tree type thing RECURSION!
+				
+				
 ''' 
 import sys
 import pickle 
@@ -20,17 +26,16 @@ import readline
 # ******************************************************************************
 #	tryGettingFile
 #
-#	This will try to connect to the file and then return the file name or kill the
-#	program
+#	This will try to connect to the file and then return the file name or kill
+#	the program
 # ******************************************************************************
 def tryGettingFile():
 	try:
-		currentLogName = pickle.load( open(filePath + infoFile, "rb") )['current']
+		currentLogName = pickle.load(open(filePath + infoFile, "rb"))['current']
 	except IOError:
 		print("Try running the \"logit -setup\" command")
 		exit(1)
-	
-	# if it succeeds
+
 	return currentLogName;
 
 # ******************************************************************************
@@ -76,7 +81,7 @@ def helpText():
 #	Returns true if the log is one of the saved logs.
 # ******************************************************************************
 def isALog( log ):
-	return log in pickle.load( open(filePath + infoFile, "rb" ))['logs']
+	return log in pickle.load(open(filePath + infoFile, "rb"))['logs']
 
 # ******************************************************************************
 # 	setCurrentLog ( name ):
@@ -85,9 +90,9 @@ def isALog( log ):
 # ******************************************************************************
 def setCurrentLog( name ):
 	if isALog(name):
-		workingLog = pickle.load( open(filePath + infoFile, "rb" ))
+		workingLog = pickle.load(open(filePath + infoFile, "rb"))
 		workingLog['current'] = name
-		pickle.dump( workingLog, open(filePath + infoFile, "w"))
+		pickle.dump(workingLog, open(filePath + infoFile, "w"))
 		return True
 	else:
 		errorWarning(name + " is not a log")
@@ -100,7 +105,7 @@ def setCurrentLog( name ):
 # ******************************************************************************
 def newLog( name ):
 	if not isALog( name ):
-		workingLog = pickle.load( open(filePath + infoFile, "rb" ))
+		workingLog = pickle.load(open(filePath + infoFile, "rb"))
 		workingLog['logs'].append(name)
 		workingLog['count'] = workingLog['count'] + 1;
 		pickle.dump (workingLog, open(filePath + infoFile, "wb"))
@@ -115,7 +120,7 @@ def newLog( name ):
 				"logs":	[]
 			 }
 
-		pickle.dump( newLog, open(filePath + name, "wb") )
+		pickle.dump(newLog, open(filePath + name, "wb"))
 		setCurrentLog(name)
 		return True
 	else:
@@ -391,7 +396,7 @@ def setup():
 	}
 			
 	try:
-		#
+		# try and open the pickle and load the current name
 		pickle.dump( current, open(filePath + infoFile, "w") )
 		currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
 	except IOError:
@@ -427,7 +432,7 @@ def deleteLog( log = currentLogName ):
 
 
 # ******************************************************************************
-# TODO:	longestLog( log = currentLog )
+#	longestLog( log = currentLog )
 #
 #	getting the longest log from a given log
 # ******************************************************************************
@@ -492,7 +497,7 @@ class Command:
 		self.func(*args)
 
 # ******************************************************************************
-# The command strings
+#	The command strings
 # ******************************************************************************
 cmds = {
 	'-new'		: Command("new", "\'name\' : creates a new log", newLog, 1, 1),
@@ -519,29 +524,44 @@ cmds = {
 #	This is a the main funciton of the progam
 # ******************************************************************************
 def main():
+	
+	# If there are no arguments
 	currentLogName = tryGettingFile()
 	if (len(sys.argv) == 1):
 		print(currentLogName)
-
+	
+	# Start at 1
 	i = 1
 	while i < len(sys.argv):
+		# for every command
 		command = sys.argv[i]
+
 		if command in cmds:
 			c = cmds[command]
+			
 			#set up the options
 			funcArgs = []
 			
+			# if they are the same
 			if (c.argN == c.argP):
 				for j in range(0, c.argN):
-					options.append( sys.argv[i + 1 + j] )
+					funcArgs.append(sys.argv[i + 1 + j])
 				
-				if (c.doFunction(funcArgs))
+				if (c.doFunction(funcArgs)):
+					# Move forward to the next command
 					i = i + c.argN
+
 				else:
+					# Threw and error and ruined it
 					exit(1)
+
+
+			# do the biggest and possible down.
 			else:
 				for j in range(c.argN, c.argP):
-	
+					for k in range(c.argN, c.argP)
+					funcArgs.append(sys.argv[i + 1 + j])
+					
 	
 		elif (command[0] != '-'):
 			cmds['-to'].doFunction([command, currentLogName])
@@ -549,9 +569,8 @@ def main():
 		else:
 			errorWarning(command + " is not a valid command")
 
+		# Go to the next
 		i = i + 1
-
-
 
 # ******************************************************************************
 # this is where it all starts
