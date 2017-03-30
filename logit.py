@@ -4,24 +4,36 @@
 '''
 	Okay, so I wanna make this logger application
 	
-	9/2/2016	- it works
-	10/31/2016	- it works real well
-	11/8/2016	- it does not work
-				- Commands need a better way of being processed. 
-				- I don't know how to do that
-				- I am thinking of a tree type thing RECURSION!
+	09 / 02 / 2016	- it works
+	10 / 31 / 2016	- it works real well
+	11 / 08 / 2016	- it does not work
+					- Commands need a better way of being processed.
+					- I don't know how to do that
+					- I am thinking of a tree type thing RECURSION!
 				
-				
-''' 
-import sys
-import pickle 
+	11 / 09 / 2016	- I learned about argparse. I might need to make this python3
+					- Nah not using argparse anymore.
+	
+	03 / 29 / 2017	- made parsing functions for general command handling.
+					- This is a huge and very simple improvement.
+	
+'''
 
-import time
-import datetime 
-from datetime import date, timedelta
+# always label the reasons you import things kids
+import sys				# for system things like File I/O
+import pickle			# for saving objects, pickling is so easy.
 
-import os
-import readline
+import time				# so I can get the time
+import datetime			# so I can get the date
+from datetime import date, timedelta	# this is why you label things at the time of adding it to the top of the code and not as a aftersight 5 monthes later
+
+import os				# For os stuff
+import readline			# For readline
+
+# import inspect			# I think I was using this to inspect functions. I don't think I need this anymore
+
+
+
 
 # ******************************************************************************
 #	tryGettingFile
@@ -54,6 +66,8 @@ class bcolors:
 # ******************************************************************************
 # --> GLOBALS <--
 
+# TODO make these less specific for more users
+
 # complete = "/usr/local/my_scripts"
 # these need to become variables in the info file.
 complete = "/Users/TheCmar7/Developer/python/Logit"
@@ -65,6 +79,76 @@ cmds = {}
 currentLogName = tryGettingFile()
 # ******************************************************************************
 
+# ******************************************************************************
+#	setup
+#
+#	This function is used to initially set up the info file of the current
+#	log and what not
+# ******************************************************************************
+def setup():
+	current = {
+		"current": "",
+		"logs": [],
+		"count": 0
+	}
+	
+	try:
+		# try and open the pickle and load the current name
+		pickle.dump( current, open(filePath + infoFile, "w") )
+		currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
+	except IOError:
+		# no current logs directory.. so make one
+		newpath = os.path.dirname(os.path.realpath(__file__))
+		newpath = newpath + "/logit_saves/"
+		current['path'] = newpath
+		if not os.path.exists(newpath):
+			os.makedirs(newpath)
+			pickle.dump( current, open(filePath + infoFile, "w") )
+			currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
+
+# ******************************************************************************
+#	longestLog( log = currentLog )
+#
+#	getting the longest log from a given log
+# ******************************************************************************
+def longestLog( log = currentLogName ):
+	if (isALog(log)):
+		workingLog = pickle.load( open( filePath + log, rb ) )
+		len = 0
+		ind = 0
+		for log in workingLog['logs']:
+			if ( len > len(log) ):
+				len = len(log)
+		return len
+	else:
+		return -1
+
+# ******************************************************************************
+#	shortenString( input, len )
+#
+#	Shorten the string an returns an array of the given length
+# ******************************************************************************
+def shortenString( input, len ):
+	chunks = len(input)
+	chunk_size = len
+	return [ x[i:i+chunk_size] for i in range(0, chunks, chunk_size) ]
+
+# ******************************************************************************
+#	errorWarning( errorString )
+#
+#
+# ******************************************************************************
+def errorWarning( errorString ):
+	print(bcolors.WARNING + "ERROR: " + bcolors.ENDC + errorString)
+
+
+# ******************************************************************************
+#	outCurrent()
+#
+#	Prints out the current working log
+# ******************************************************************************
+def outCurrent():
+	print(tryGettingFile())
 
 # ******************************************************************************
 # 	helpText():
@@ -341,7 +425,7 @@ def breakLine( log = currentLogName ):
 #	This will allow the user to save from a file that was outputted from his
 #	program
 # ******************************************************************************
-def inputLogFromFile( file ):
+def inputLogFromFile( file, ):
 	
 	# Try to open the file
 	try:
@@ -377,37 +461,13 @@ def inputLogFromFile( file ):
 		pickle.dump( workingLog, open( filePath + name, "w" ) )
 
 		return True
+
+
+
 	# file not a thing
 	except IOError:
 		errorWarning( file + ": Is not a file.")
 		return False
-
-# ******************************************************************************
-#	setup
-#
-#	This function is used to initially set up the info file of the current
-#	log and what not
-# ******************************************************************************
-def setup():
-	current = {
-		"current": "",
-		"logs": [],
-		"count": 0
-	}
-			
-	try:
-		# try and open the pickle and load the current name
-		pickle.dump( current, open(filePath + infoFile, "w") )
-		currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
-	except IOError:
-		# no current logs directory.. so make one
-		newpath = os.path.dirname(os.path.realpath(__file__))
-		newpath = newpath + "/logit_saves/"
-		current['path'] = newpath
-		if not os.path.exists(newpath):
-			os.makedirs(newpath)
-			pickle.dump( current, open(filePath + infoFile, "w") )
-			currentLogName = pickle.load( open( filePath + infoFile, "rb" ) )['current']
 
 # ******************************************************************************
 #	deleteLog( log = currentLog )
@@ -422,59 +482,12 @@ def deleteLog( log = currentLogName ):
 			workingInfo['logs'].remove(log)
 			pickle.dump( workingInfo, open(filePath + infoFile, "w") )
 			os.remove(filePath + log)
-			#TODO change current
+		#TODO change current
 		return True
 	else:
 		# Print Warning, Return False
 		print("not a log")
 		return False
-
-
-
-# ******************************************************************************
-#	longestLog( log = currentLog )
-#
-#	getting the longest log from a given log
-# ******************************************************************************
-def longestLog( log = currentLogName ):
-	if (isALog(log)):
-		workingLog = pickle.load( open( filePath + log, rb ) )
-		len = 0
-		ind = 0
-		for log in workingLog['logs']:
-			if ( len > len(log) ):
-				len = len(log)
-
-		return len
-	else:
-		return False
-
-# ******************************************************************************
-#	shortenString( input, len )
-#
-#	Shorten the string an returns an array of the given length
-# ******************************************************************************
-def shortenString( input, len ):
-	chunks = len(input)
-	chunk_size = len
-	return [ x[i:i+chunk_size] for i in range(0, chunks, chunk_size) ]
-
-# ******************************************************************************
-#	errorWarning( errorString )
-#
-#
-# ******************************************************************************
-def errorWarning( errorString ):
-	print(bcolors.WARNING + "ERROR: " + bcolors.ENDC + errorString)
-
-# ******************************************************************************
-#	outCurrent()
-#
-#	Prints out the current working log
-# ******************************************************************************
-def outCurrent():
-	print(tryGettingFile())
-
 
 # ******************************************************************************
 #	Class Command
@@ -483,39 +496,265 @@ def outCurrent():
 #	cmd
 #	desc
 #	func
-#	TODO: options
 # ******************************************************************************
 class Command:
-	def __init__(self, name, desc, func, argN = 0, argP = 0):
+	def __init__(self, name, desc, func):
 		self.name = name
 		self.desc = desc
 		self.func = func
-		self.argN = argN
-		self.argP = argP
+	#self.possibleOptions = possibleOptions;
 	
-	def doFunction(self, args):
-		self.func(*args)
+	def doFunction(self, options):
+		 self.func(*options)
+
+# ******************************************************************************
+# *******************PARSING****************************************************
+# ******************************************************************************
+
+# ******************************************************************************
+#	ParseNewLog
+#
+# ******************************************************************************
+def parseNewLog(name, options):
+	if (len(options) > 1):
+		errorWarning(name + ": too many arguments given for filename")
+	else:
+		newLog(options[0])
+
+# ******************************************************************************
+#	ParseNewLog
+#
+# ******************************************************************************
+def parseOutCurrent(name, options):
+	if (len(options) > 0):
+		errorWarning(name + ": too many arguments given")
+	else:
+		outCurrent()
+
+# ******************************************************************************
+#	parseListOutLogs
+#
+# ******************************************************************************
+def parseListOutLogs(name, options):
+	if (len(options) > 0):
+		errorWarning(name + ": too many arguments given")
+	else:
+		listOutLogs()
+
+# ******************************************************************************
+#	parseSetCurrentLog
+#
+# ******************************************************************************
+def parseSetCurrentLog(name, options):
+	if (len(options) > 1):
+		errorWarning(name + ": too many arguments given")
+	else:
+		setCurrentLog(options[0])
+
+
+# ******************************************************************************
+#	parseSaveLogToFile
+#
+# ******************************************************************************
+def parseSaveLogToFile(name, options):
+	if (len(options) > 2):
+		errorWarning(name + ": too many arguments given")
+	elif (len(options) == 1):
+		saveLogToFile(option[0])
+	elif (len(options) == 2):
+		if (isALog(options[0])):
+			saveLogToFile(option[1], options[0])
+		elif (isALog(options[1])):
+			saveLogToFile(option[1], options[0])
+		else:
+			errorWarning("need a valid Log name")
+	else:
+		errorWarning("Not enough arguments")
+
+
+
+# ******************************************************************************
+#	parsePutDateInLog
+#
+# ******************************************************************************
+def parsePutDateInLog(name, options):
+	if (len(options) > 1):
+		errorWarning(name + ": too many arguments given")
+	elif (len(options) == 1):
+		if (isALog(options[0])):
+			putDateInLog(options[0])
+		else:
+			errorWarning(options[0]  + "is not a valid Log name")
+	else:
+		putDateInLog()
+
+
+
+# ******************************************************************************
+#	parsePrintOutLog
+#
+# ******************************************************************************
+def parsePrintOutLog(name, options):
+	if (len(options) > 0):
+		errorWarning(name + ": too many arguments given")
+	else:
+		printOutLog()
+
+# ******************************************************************************
+#	parseOutInfo
+#
+# ******************************************************************************
+def parseOutInfo(name, options):
+	if (len(options) > 1):
+		errorWarning(name + ": too many arguments given")
+	elif (len(options) == 1):
+		if (isALog(options[0])):
+			outInfo(options[0])
+		else:
+			errorWarning(options[0] + " is not a valid Log name")
+	else:
+		outInfo()
+
+# ******************************************************************************
+#	parseStarting
+#
+# ******************************************************************************
+def parseStarting(name, options):
+	if (len(options) > 0):
+		errorWarning(name + ": too many arguments given")
+	else:
+		starting()
+
+# ******************************************************************************
+#	parseEditLog
+#
+# ******************************************************************************
+def parseEditLog(name, options):
+	if (len(options) > 1):
+		errorWarning(name + ": too many arguments given")
+	elif (len(options) == 1):
+		if (isALog(options[0])):
+			editLog(options[0])
+		else:
+			errorWarning(options[0] + " is not a valid Log name")
+	else:
+		editLog()
+
+# ******************************************************************************
+#	parseBreakLine
+#
+# ******************************************************************************
+def parseBreakLine(name, options):
+	if (len(options) > 1):
+		errorWarning(name + ": too many arguments given")
+	elif (len(options) == 1):
+		if (isALog(options[1])):
+			breakLine(options[0])
+		else:
+			errorWarning(options[0] + " is not a valid Log name")
+	else:
+		breakLine()
+
+# ******************************************************************************
+#	parseInputLogFromFile
+#
+# ******************************************************************************
+def parseInputLogFromFile(name, options):
+	if (len(options) < 0):
+		errorWarning(name + ": not enough arguments given")
+	else:
+		inputLogFromFile(options[0])
+
+
+# ******************************************************************************
+#	parseInputLogFromFile
+#
+# ******************************************************************************
+def parseDeleteLog(name, options):
+	if (len(options) > 0):
+		errorWarning(name + ": too many arguments given")
+	else:
+		deleteLog()
+
+# ******************************************************************************
+#	parseSetup
+#
+# ******************************************************************************
+def parseSetup(name, options):
+	if (len(options) > 0):
+		errorWarning(name + ": too many arguments given")
+	else:
+		setup()
+
+
+# ******************************************************************************
+#	parseHelpText
+#
+# ******************************************************************************
+def parseHelpText(name, options):
+	if (len(options) > 0):
+		errorWarning(name + ": too many arguments given")
+	else:
+		helpText()
+
 
 # ******************************************************************************
 #	The command strings
+#	key		=> Value
+#	caller	=> Command Object
 # ******************************************************************************
 cmds = {
-	'-new'		: Command("new", "\'name\' : creates a new log", newLog, 1, 1),
-	'-n'		: Command("name",  ": prints out the name of the current log", outCurrent, 0, 1),
-	'-ls'		: Command("list",  ": lists out all the logs", listOutLogs),
-	'-o'		: Command("open",  ": opens the another log", setCurrentLog, 1, 1),
-	'-s'		: Command("save",  "\'name\' : saves the log to text file", saveLogToFile, 1, 2),
-	'-d'		: Command("date",  ": adds todays date to the log", putDateInLog, 0, 1),
-	'-out'		: Command("out",  ": prints out the logs", printOutLog, 0, 1),
-	'-to'		: Command("to",  "\'name\' \'msg\' : logs the given name", logTo, 2, 2),
-	'-i'		: Command("info",  ": prints out the info", outInfo, 0, 1),
-	'-start'	: Command("start",  ": starts a log console", starting, 0, 1),
-	'-edit'		: Command("edit",  ": you can remove logs", editLog, 0, 1),
-	'-break'	: Command("break",  ": adds a break line in log", breakLine, 0, 1),
-	'-in'		: Command("from",  "\'name\' \'file\' : imports from a saved text file", inputLogFromFile, 2, 2),
-	'-del'		: Command("delete",  ": deletes the current log", deleteLog, 0, 1),
-	'--setup'	: Command("setup",  ": sets up the Logit saves", setup),
-	'--help'	: Command("help", ": Shows the help message", helpText)
+	'-new'		: Command("new",
+						  "\'name\' : creates a new log",
+						  parseNewLog),
+				
+	'-n'		: Command("name",
+						  ": prints out the name of the current log",
+						  parseOutCurrent),
+						  
+	'-ls'		: Command("list",
+						  ": lists out all the saved logs",
+						  parseListOutLogs),
+						  
+	'-o'		: Command("open",
+						  ": opens the another log",
+						  parseSetCurrentLog),
+						  
+	'-s'		: Command("save",
+						  "\'name\' : saves the log to text file",
+						  parseSaveLogToFile),
+	'-d'		: Command("date",
+						  ": adds todays date to the log",
+						  parsePutDateInLog),
+	'-out'		: Command("out",
+						  ": prints out the messages",
+						  parsePrintOutLog),
+	'-i'		: Command("info",
+						  ": prints out the info",
+						  parseOutInfo),
+	'-start'	: Command("start",
+						  ": starts a log console",
+						  parseStarting),
+	'-edit'		: Command("edit",
+						  ": you can remove logs",
+						  parseEditLog),
+	'-break'	: Command("break",
+						  ": adds a break line in log",
+						  parseBreakLine),
+	'-in'		: Command("from",
+						  "\'name\' \'file\' : imports from a saved text file",
+						  parseInputLogFromFile),
+	'-del'		: Command("delete",
+						  ": deletes the current log",
+						  parseDeleteLog),
+	# I should make a make file that does this so that people that download
+	# the git can easily set it up and start using it.
+	'--setup'	: Command("setup",
+						  ": sets up the Logit saves",
+						  parseSetup),
+	'--help'	: Command("help",
+						  ": Shows the help message",
+						  parseHelpText)
 	}
 
 # ******************************************************************************
@@ -524,55 +763,81 @@ cmds = {
 #	This is a the main funciton of the progam
 # ******************************************************************************
 def main():
+	#  SUGG: Should I make it so people can use just the first letter of the command?
+	#		 I would need to change some of the ambiguous commands
+	#  TODO: check the options that there are no top options that are the same name as
+	#		 options
+	
+	
+	# arguments
+	arguments = sys.argv[1:]
+	print(arguments)
 	
 	# If there are no arguments
 	currentLogName = tryGettingFile()
-	if (len(sys.argv) == 1):
+	if (len(arguments) == 0):
 		print(currentLogName)
 	
-	# Start at 1
-	i = 1
-	while i < len(sys.argv):
-		# for every command
-		command = sys.argv[i]
-
-		if command in cmds:
-			c = cmds[command]
-			
-			#set up the options
-			funcArgs = []
-			
-			# if they are the same
-			if (c.argN == c.argP):
-				for j in range(0, c.argN):
-					funcArgs.append(sys.argv[i + 1 + j])
-				
-				if (c.doFunction(funcArgs)):
-					# Move forward to the next command
-					i = i + c.argN
-
-				else:
-					# Threw and error and ruined it
-					exit(1)
-
-
-			# do the biggest and possible down.
-			else:
-				for j in range(c.argN, c.argP):
-					for k in range(c.argN, c.argP)
-					funcArgs.append(sys.argv[i + 1 + j])
-					
 	
-		elif (command[0] != '-'):
-			cmds['-to'].doFunction([command, currentLogName])
+	# so now every function doesn't need to be a seperate entity,
+	# the function can be used by parsing up the function options and
+	# then using the functions where they are needed.
+	
+	# split into smaller arrays at every top level option
+	splits = []
+	usedComm = []
+	commands = cmds.keys()
+	for i in range(0, len(arguments)):
+		if arguments[i] in commands:
+			splits.append(i)
+			usedComm.append(arguments[i])
+			
+	if len(arguments) not in splits:
+		splits.append(len(arguments))
 
-		else:
-			errorWarning(command + " is not a valid command")
+	print(splits)
+	print(usedComm)
 
-		# Go to the next
-		i = i + 1
+	# this is doomed to fail.
+	for j in range(0, len(usedComm)):
+		print(usedComm[j] + " " + str(arguments[splits[j] + 1:splits[j + 1]]))
+		# This won't work until we rework all the functions that are given to
+		# the command classes.
+		cmds.get(usedComm[j]).func(usedComm[j], arguments[splits[j] + 1:splits[j + 1]])
+
+	
+	# take arguements out of the array as they are executed
+#	while len(arguments) > 0:
+#		argument = arguments.pop(0)
+#		
+#		if argument in cmds:
+#			print(argument)
+#			print(inspect.getargspec(cmds[argument].func))
+#			
+#			funcArgumentsNeeded = (inspect.getargspec(cmds[argument].func).args)
+#			numOfArgumentsNeeded = len(funcArgumentsNeeded)
+#			if numOfArgumentsNeeded == 0:
+#				cmds[argument].doFunction([])
+#				arguments.pop(0)
+#
+#			else:
+#				customArgs = []
+#				if funcArgumentsNeeded[-1] == 'log':
+#					if (isALog(arguments[-1])):
+#						customArgs.append(arguments.pop(-1))
+#				numOfArgumentsNeeded - 1
+#				for _ in range(0, numOfArgumentsNeeded):
+#					customArgs.append(arguments.pop(1))
+#	
+#				cmds[argument].doFunction(customArgs)
+#
+#		else:
+#			arguments.pop(0)
 
 # ******************************************************************************
+#
 # this is where it all starts
+#
 # ******************************************************************************
-main()
+if __name__ == "__main__":
+	main()
