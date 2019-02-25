@@ -1,10 +1,10 @@
 (dp0
 S'count'
 p1
-I4
+I6
 sS'lastEdit'
 p2
-S'2016-11-04 13:38'
+S'2019-02-25 15:26'
 p3
 sS'logs'
 p4
@@ -17,12 +17,20 @@ aS'23:29 - hi a third time'
 p8
 aS'13:38 - hi a fourth time'
 p9
-asS'name'
+aS'[Mon 2019-02-25]'
 p10
-S'testing'
+aS'14:58 - testerAgain'
 p11
-sS'dateCreated'
+aS'[Mon 2019-02-25]'
 p12
-S'2016-10-25 22:43'
+aS'15:26 - this is added now'
 p13
+asS'name'
+p14
+S'testing'
+p15
+sS'dateCreated'
+p16
+S'2016-10-25 22:43'
+p17
 s.

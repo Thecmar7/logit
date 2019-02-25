@@ -1,11 +1,11 @@
 (dp0
 S'current'
 p1
-S'testing'
+S'testerAgain'
 p2
 sS'count'
 p3
-I6
+I8
 sS'logs'
 p4
 (lp5
@@ -15,8 +15,12 @@ aS'Senior Project'
 p7
 aS'bugs fixed'
 p8
-asS'path'
+aS'testy test'
 p9
-S'/Users/TheCmar7/Developer/python/Logit/logit_saves/'
+aS'testerAgain'
 p10
+asS'path'
+p11
+S'/Users/TheCmar7/Developer/python/Logit/logit_saves/'
+p12
 s.

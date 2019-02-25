@@ -16,22 +16,25 @@
 	
 	03 / 29 / 2017	- made parsing functions for general command handling.
 					- This is a huge and very simple improvement.
+
+	02 / 25 / 2019	- Lets see what I remember 
+					- Holy cow it's longer than I remember.
+
+					- why did I not use argparse? 
+					-	Cause it's confusing.
 	
 '''
-
-# always label the reasons you import things kids
 import sys				# for system things like File I/O
 import pickle			# for saving objects, pickling is so easy.
 
 import time				# so I can get the time
 import datetime			# so I can get the date
-from datetime import date, timedelta	# this is why you label things at the time of adding it to the top of the code and not as a aftersight 5 monthes later
+
+# this is why you label things at the time of adding it to the top of the code and not as a aftersight 5 monthes later
+from datetime import date, timedelta	
 
 import os				# For os stuff
 import readline			# For readline
-
-# import inspect			# I think I was using this to inspect functions. I don't think I need this anymore
-
 
 
 
@@ -157,7 +160,7 @@ def outCurrent():
 # ******************************************************************************
 def helpText():
 	for k, v in cmds.items():
-		print( "\t" + k + " " + v.desc)
+		print("\t" + v.helpDescription())
 
 # ******************************************************************************
 #	isALog ( log )
@@ -252,6 +255,7 @@ def logTo( instring, log = currentLogName ):
 # ******************************************************************************
 def printOutLog( log = currentLogName ):
 	if isALog(log):
+		print(log)
 		workingLog = pickle.load( open(filePath + log, "rb" ))['logs']
 		for log in workingLog:
 			if (log[0] == '['):
@@ -300,6 +304,7 @@ def outInfo( log = currentLogName ):
 #	This prints out the all of the current notes 
 # ******************************************************************************
 def listOutLogs():
+	
 	savedLogs = pickle.load( open(filePath + infoFile, "rb" ))['logs']
 	for log in savedLogs:
 		print("\t" + log)
@@ -489,23 +494,60 @@ def deleteLog( log = currentLogName ):
 		print("not a log")
 		return False
 
+'''
+	Class CommandList
+
+'''
+
+
 # ******************************************************************************
 #	Class Command
 #
+#	command
 #	name
 #	cmd
 #	desc
 #	func
 # ******************************************************************************
 class Command:
-	def __init__(self, name, desc, func):
-		self.name = name
-		self.desc = desc
-		self.func = func
-	#self.possibleOptions = possibleOptions;
+	def __init__(self, arg, name, desc, func, possibleOptions = {}):
+		self.arg = arg		# the inputted argument to fire function
+		self.name = name	# the name that helps user know what the function does
+		self.desc = desc	# a description of the functions
+		self.func = func	# the function that is fired
+		# an object that is the types of the possible function options
+		self.possibleOptions = possibleOptions
+	
+	def helpDescription(self):
+		return self.arg + "\t: " + self.name + "\t- " + self.desc
 	
 	def doFunction(self, options):
-		 self.func(*options)
+		for i in range(0, len(options)):
+			break;
+		
+		self.func(*options)
+
+# ******************************************************************************
+#	Class CommandDictionary
+#
+# ******************************************************************************
+class CommandDictionary:
+	def __init__(self):
+		self.commandDict = {}
+	
+	def addCommand(self, command):
+		self.commandDict[command.arg] = command
+	
+	def getCommandByName(self, name):
+		return "TODO: IMPLEMENT"
+		
+	def getCommandByArg(self, arg):
+		return self.commandDict[arg]
+		
+	def runCommandByArg(self, arg, options = []):
+		return 0
+	
+
 
 # ******************************************************************************
 # *******************PARSING****************************************************
@@ -548,6 +590,8 @@ def parseListOutLogs(name, options):
 def parseSetCurrentLog(name, options):
 	if (len(options) > 1):
 		errorWarning(name + ": too many arguments given")
+	elif (len(options) == 0):
+		errorWarning(name + ": no arguments given")
 	else:
 		setCurrentLog(options[0])
 
@@ -704,56 +748,78 @@ def parseHelpText(name, options):
 #	caller	=> Command Object
 # ******************************************************************************
 cmds = {
-	'-new'		: Command("new",
-						  "\'name\' : creates a new log",
-						  parseNewLog),
+	'-new'		: Command("-new",
+						"new",
+						"[\'name\'] creates a new log",
+						parseNewLog),
 				
-	'-n'		: Command("name",
-						  ": prints out the name of the current log",
-						  parseOutCurrent),
+	'-n'		: Command('-n',
+						"name",
+						"prints out the name of the current log",
+						parseOutCurrent),
 						  
-	'-ls'		: Command("list",
-						  ": lists out all the saved logs",
-						  parseListOutLogs),
+	'-ls'		: Command(	'-ls',
+							"list",
+						  	"lists out all the saved logs",
+						 	parseListOutLogs),
 						  
-	'-o'		: Command("open",
-						  ": opens the another log",
+	'-o'		: Command("-o",
+						  "open",
+						  "[\'name\'] opens another log",
 						  parseSetCurrentLog),
 						  
-	'-s'		: Command("save",
-						  "\'name\' : saves the log to text file",
+	'-s'		: Command('-s',
+							"save",
+						  "[\'name\'] saves the log to text file",
 						  parseSaveLogToFile),
-	'-d'		: Command("date",
-						  ": adds todays date to the log",
+
+	'-d'		: Command('-d',
+						"date",
+						  "adds todays date to the log",
 						  parsePutDateInLog),
-	'-out'		: Command("out",
-						  ": prints out the messages",
+
+	'-out'		: Command('-out',
+						"out",
+						  "prints out the messages",
 						  parsePrintOutLog),
-	'-i'		: Command("info",
-						  ": prints out the info",
+
+	'-i'		: Command('-i',
+							"info",
+						  "prints out the info",
 						  parseOutInfo),
-	'-start'	: Command("start",
-						  ": starts a log console",
+
+	'-start'	: Command("-start",
+							"start",
+						  "starts a log console",
 						  parseStarting),
-	'-edit'		: Command("edit",
-						  ": you can remove logs",
+
+	'-edit'		: Command('-edit',	
+							"edit",
+						  "you can remove logs",
 						  parseEditLog),
-	'-break'	: Command("break",
-						  ": adds a break line in log",
+
+	'-break'	: Command('-break',
+						"break",
+						  "adds a break line in log",
 						  parseBreakLine),
-	'-in'		: Command("from",
-						  "\'name\' \'file\' : imports from a saved text file",
+
+	'-in'		: Command('-in',
+							"from file",
+						  "[\'name\'] [\'file\'] imports from a saved text file",
 						  parseInputLogFromFile),
-	'-del'		: Command("delete",
-						  ": deletes the current log",
+	'-del'		: Command('-del',
+						"delete",
+						  "deletes the current log",
 						  parseDeleteLog),
 	# I should make a make file that does this so that people that download
 	# the git can easily set it up and start using it.
-	'--setup'	: Command("setup",
-						  ": sets up the Logit saves",
+	'--setup'	: Command('--setup',
+						"setup",
+						  "sets up the Logit saves",
 						  parseSetup),
-	'--help'	: Command("help",
-						  ": Shows the help message",
+	'--help'	: Command('--help',
+						"help",
+						  "Shows the help message",
 						  parseHelpText)
 	}
 
@@ -768,16 +834,14 @@ def main():
 	#  TODO: check the options that there are no top options that are the same name as
 	#		 options
 	
-	
 	# arguments
 	arguments = sys.argv[1:]
-	print(arguments)
+	#print(arguments)
 	
 	# If there are no arguments
 	currentLogName = tryGettingFile()
 	if (len(arguments) == 0):
 		print(currentLogName)
-	
 	
 	# so now every function doesn't need to be a seperate entity,
 	# the function can be used by parsing up the function options and
@@ -786,53 +850,45 @@ def main():
 	# split into smaller arrays at every top level option
 	splits = []
 	usedComm = []
+	leftOver = []
 	commands = cmds.keys()
 	for i in range(0, len(arguments)):
 		if arguments[i] in commands:
 			splits.append(i)
 			usedComm.append(arguments[i])
-			
+		else:	
+			leftOver.append(arguments[i])
+		
 	if len(arguments) not in splits:
 		splits.append(len(arguments))
 
-	print(splits)
-	print(usedComm)
+	# log the text given
+	if (len(leftOver) == 1 and len(arguments) == 1):
+		logTo(leftOver[0])
 
-	# this is doomed to fail.
+	# do commands
 	for j in range(0, len(usedComm)):
-		print(usedComm[j] + " " + str(arguments[splits[j] + 1:splits[j + 1]]))
-		# This won't work until we rework all the functions that are given to
-		# the command classes.
-		cmds.get(usedComm[j]).func(usedComm[j], arguments[splits[j] + 1:splits[j + 1]])
+		thisSplit = splits[j + 1]
+		theseArgs = arguments[splits[j] + 1:thisSplit]
+		command = cmds.get(usedComm[j])
+		#print( str(j) + " thissplit: " + str(thisSplit))
+		#print(str(j) + " theseArgs: " + str(theseArgs))
+		#print(str(j) + " command: " + str(command))
+		command.func(usedComm[j], theseArgs)
+	
 
 	
-	# take arguements out of the array as they are executed
-#	while len(arguments) > 0:
-#		argument = arguments.pop(0)
-#		
-#		if argument in cmds:
-#			print(argument)
-#			print(inspect.getargspec(cmds[argument].func))
-#			
-#			funcArgumentsNeeded = (inspect.getargspec(cmds[argument].func).args)
-#			numOfArgumentsNeeded = len(funcArgumentsNeeded)
-#			if numOfArgumentsNeeded == 0:
-#				cmds[argument].doFunction([])
-#				arguments.pop(0)
-#
-#			else:
-#				customArgs = []
-#				if funcArgumentsNeeded[-1] == 'log':
-#					if (isALog(arguments[-1])):
-#						customArgs.append(arguments.pop(-1))
-#				numOfArgumentsNeeded - 1
-#				for _ in range(0, numOfArgumentsNeeded):
-#					customArgs.append(arguments.pop(1))
-#	
-#				cmds[argument].doFunction(customArgs)
-#
-#		else:
-#			arguments.pop(0)
+	# print(splits)
+	# print(usedComm)
+	# print(leftOver)
+
+
+
+
+
+
+	
+
 
 # ******************************************************************************
 #
